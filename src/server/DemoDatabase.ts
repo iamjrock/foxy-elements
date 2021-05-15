@@ -50,10 +50,10 @@ class DemoDatabase extends Dexie {
   constructor() {
     super('foxy_demo_db');
 
-    this.version(5).stores({
+    this.version(4).stores({
       carts: '++id',
       cart_templates: '++id,store',
-      customers: '++id,store,email',
+      customers: '++id,store',
       customer_portal_settings: 'store',
       customer_attributes: '++id,customer',
       customer_addresses: '++id,customer',
