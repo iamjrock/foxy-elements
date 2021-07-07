@@ -12,6 +12,7 @@ import { composeEmailTemplate } from './composers/composeEmailTemplate';
 import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
+import { composeTax } from './composers/composeTax';
 import { composeTransaction } from './composers/composeTransaction';
 import { composeTemplateConfig } from './composers/composeTemplateConfig';
 import { composeUser } from './composers/composeUser';
@@ -580,6 +581,17 @@ router.delete('/s/admin/users/:id', async ({ params, request }) => {
 
   return user;
 });
+
+// taxes
+
+router.get('/s/admin/stores/:storeId/taxes/:id', async ({ params }) => {
+  return respondItemById(db.taxes, parseInt(params.id), composeTax);
+});
+
+router.get('/s/admin/stores/:id/taxes', async ({ request }) => {
+  return respondItems(db.taxes, composeTax, request.url, 'fx:taxes');
+});
+
 
 router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
   return respondItems(db.emailTemplates, composeCartTemplate, request.url, 'fx:email_templates');
