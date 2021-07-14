@@ -13,15 +13,16 @@ import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
 import { composeTax } from './composers/composeTax';
-import { composeTransaction } from './composers/composeTransaction';
+import { composeTemplateCache } from './composers/composeTemplateCache';
 import { composeTemplateConfig } from './composers/composeTemplateConfig';
+import { composeTransaction } from './composers/composeTransaction';
 import { composeUser } from './composers/composeUser';
 import { getPagination } from '../getPagination';
 import { router } from '../router';
-import { composeTemplateCache } from './composers/composeTemplateCache';
 
 const endpoint = 'https://demo.foxycart.com/s/admin';
 export { endpoint, router, db, whenDbReady, DemoDatabase };
+const endpoint = 'https://demo.foxycart.com/s/admin';
 
 interface Country {
   default: string;
