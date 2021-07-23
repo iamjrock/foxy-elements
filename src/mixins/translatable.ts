@@ -192,12 +192,14 @@ export declare class TranslatableMixinHost {
 
   /**
    * Namespace used by this element.
+   *
    * @since 1.4.0
    */
   ns: string;
 
   /**
    * Translation function from i18next fixed to the current language and element namespace.
+   *
    * @since 1.4.0
    */
   get t(): Translator;
@@ -249,7 +251,10 @@ export const TranslatableMixin = <T extends Base>(
       this.__untrackTranslations = I18nElement?.onTranslationChange(() => this.requestUpdate());
     }
 
-    /** @readonly */
+    /**
+     * @param changedProperties
+     * @readonly
+     */
     updated(changedProperties: Map<keyof I18n, unknown>): void {
       super.updated(changedProperties);
 
