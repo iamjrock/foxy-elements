@@ -23,6 +23,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
    * Instances of this event are dispatched on an element whenever it changes its
    * state (e.g. when going from `busy` to `idle` or on `form` data change).
    * This event isn't cancelable, and it does not bubble.
+   *
    * @readonly
    */
   static readonly UpdateEvent = UpdateEvent;
@@ -31,6 +32,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
    * Creates a tagged [Rumour](https://sdk.foxy.dev/classes/_core_index_.rumour.html)
    * instance if it doesn't exist or returns cached one otherwise. NucleonElements
    * use empty Rumour group by default.
+   *
    * @readonly
    */
   static readonly Rumour = memoize<(group: string) => Rumour>(() => new Rumour());
@@ -38,6 +40,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
   /**
    * Universal [API](https://sdk.foxy.dev/classes/_core_index_.api.html) client
    * that dispatches cancellable `FetchEvent` on an element before each request.
+   *
    * @readonly
    */
   static readonly API = API;

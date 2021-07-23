@@ -335,7 +335,7 @@
       "store_name": "Acme Corporation",
       "store_domain": "acme",
       "use_remote_domain": false,
-      "store_url": "http://example.com/",
+      "store_url": "https://example.com/",
       "receipt_continue_url": "",
       "store_email": "example@example.com",
       "from_email": "john.doe@example.com",
