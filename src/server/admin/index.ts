@@ -7,6 +7,7 @@ import { composeCustomer } from './composers/composeCustomer';
 import { composeCustomerAddress } from './composers/composeCustomerAddress';
 import { composeCustomerAttribute } from './composers/composeCustomerAttribute';
 import { composeDefaultPaymentMethod } from './composers/composeDefaultPaymentMethod';
+import { composeEmailTemplate } from './composers/composeEmailTemplate';
 import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
@@ -549,7 +550,15 @@ router.delete('/s/admin/users/:id', async ({ params, request }) => {
   return user;
 });
 
-router.get('/s/admin/stores/:id/cart_templates', async ({ params, request }) => {
+router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
+  return respondItems(db.emailTemplates, composeCartTemplate, request.url, 'fx:email_templates');
+});
+
+router.get('/s/admin/email_templates/:id', async ({ params }) => {
+  return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);
+});
+
+router.get('/s/admin/stores/:id/cart_templates', async ({ request }) => {
   return respondItems(db.cartTemplates, composeCartTemplate, request.url, 'fx:cart_templates');
 });
 
@@ -557,7 +566,7 @@ router.get('/s/admin/cart_templates/:id', async ({ params }) => {
   return respondItemById(db.cartTemplates, parseInt(params.id), composeCartTemplate);
 });
 
-router.post('/s/admin/cart_templates/:id/cache', async ({ params, request }) => {
+router.post('/s/admin/cart_templates/:id/cache', async () => {
   return new Response(JSON.stringify(composeTemplateCache()));
 });
 

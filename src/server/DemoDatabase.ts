@@ -26,6 +26,8 @@ class DemoDatabase extends Dexie {
 
   customers: Dexie.Table<any, number>;
 
+  emailTemplates: Dexie.Table<any, number>;
+
   errorEntries: Dexie.Table<any, number>;
 
   items: Dexie.Table<any, number>;
@@ -52,7 +54,8 @@ class DemoDatabase extends Dexie {
       customer_addresses: '++id,customer',
       customer_attributes: '++id,customer',
       customer_portal_settings: 'store',
-      customers: '++id,store',
+      customers: '++id,store,email',
+      email_templates: '++id,store',
       error_entries: '++id',
       items: '++id,cart,transaction',
       payment_methods: '++id,customer',
@@ -69,6 +72,7 @@ class DemoDatabase extends Dexie {
     this.customerAttributes = this.table('customer_attributes');
     this.customerPortalSettings = this.table('customer_portal_settings');
     this.customers = this.table('customers');
+    this.emailTemplates = this.table('email_templates');
     this.errorEntries = this.table('error_entries');
     this.items = this.table('items');
     this.paymentMethods = this.table('payment_methods');
