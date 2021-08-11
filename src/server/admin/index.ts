@@ -12,6 +12,7 @@ import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
 import { composeTransaction } from './composers/composeTransaction';
+import { composeTemplateConfig } from './composers/composeTemplateConfig';
 import { composeUser } from './composers/composeUser';
 import { getPagination } from '../getPagination';
 import { router } from '../router';
@@ -568,6 +569,10 @@ router.get('/s/admin/cart_templates/:id', async ({ params }) => {
 
 router.post('/s/admin/cart_templates/:id/cache', async () => {
   return new Response(JSON.stringify(composeTemplateCache()));
+});
+
+router.get('/s/admin/template_configs/:id', async ({ params }) => {
+  return respondItemById(db.templateConfig, parseInt(params.id), composeTemplateConfig);
 });
 
 /**
