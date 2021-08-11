@@ -221,7 +221,6 @@ export class CartTemplateForm extends Base<Item> {
     if (!(this.data && this.data._links && this.data._links['fx:cache'])) {
       return;
     }
-    console.log(this.data._links['fx:cache'].href);
     const result = await this._fetch(this.data._links['fx:cache'].href, {
       body: '',
       method: 'POST',
