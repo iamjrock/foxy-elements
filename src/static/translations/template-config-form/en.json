@@ -1,0 +1,52 @@
+{
+  "add-hidden-product": "Add hidden option",
+  "analytics_config": {
+    "summary": "Configure your analytics",
+    "label-enable": "Enable Google Analytics",
+    "usage": "Usage",
+    "google_analytics": {
+      "usage": "Usage",
+      "account_id": "Tracking id",
+      "include_on_site": "Include Google Analytics on my website via loader.js"
+    }
+  },
+  "cart": "Cart",
+  "cart-display": "Cart display",
+  "cart_display_config": {
+    "hidden_product_options": "hidden options",
+    "show_enddate": "End date",
+    "show_product_category": "Category code",
+    "show_product_code": "Code",
+    "show_product_options": "Options",
+    "show_product_weight": "Weight",
+    "show_sub_frequency": "Frequency",
+    "show_sub_nextdate": "Next date",
+    "show_sub_startdate": "Start date",
+    "usage": "Usage"
+  },
+  "cart_type": "Cart type",
+  "checkout": "Checkout",
+  "custom": "Custom",
+  "custom_config": "Custom variables for the twig template (JSON).",
+  "custom_script_values": {
+    "header": "Header",
+    "footer": "Footer",
+    "checkout_fields": "Checkout fields",
+    "multiship_checkout_fields": "Multiship checkout fields"
+  },
+  "default": "Default",
+  "debug-usage": "Log debug messages to the browser's console.",
+  "foxycomplete": {
+    "usage": "Foxycomplete usage",
+    "show_flags": "Show country flags",
+    "show_combobox": "Show combo box",
+    "combobox_open": "open icon",
+    "combobox_close": "close icon"
+  },
+  "fullpage": "Full page",
+  "none": "None",
+  "product": "Product",
+  "required": "Required",
+  "subscription": "Subscription",
+  "your-website": "Your website"
+}
