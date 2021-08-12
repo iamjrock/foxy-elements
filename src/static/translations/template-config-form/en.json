@@ -22,13 +22,19 @@
     "show_sub_frequency": "Frequency",
     "show_sub_nextdate": "Next date",
     "show_sub_startdate": "Start date",
-    "usage": "Usage"
+    "usage": "Customize cart display"
   },
-  "cart_type": "Cart type",
+  "cart_type": {
+    "custom": "Custom",
+    "default": "Sidecart",
+    "fullpage": "Full page",
+    "title": "Cart type"
+  },
   "checkout": "Checkout",
   "custom": "Custom",
   "custom_config": "Custom variables for the twig template (JSON).",
   "custom_script_values": {
+    "title": "Custom scripts",
     "header": "Header",
     "footer": "Footer",
     "checkout_fields": "Checkout fields",
