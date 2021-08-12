@@ -1,14 +1,15 @@
-import { Checkbox, Group } from '../../private/index';
+import { Checkbox, Choice, Group } from '../../private/index';
 import { css, html, CSSResultArray, PropertyDeclarations, TemplateResult } from 'lit-element';
 import { ConfigurableMixin } from '../../../mixins/configurable';
 import { Item, TemplateConfigJson } from './types';
 import { NucleonElement } from '../NucleonElement';
-import { NucleonV8N } from '../NucleonElement/types';
+import { HALJSONResource, NucleonV8N } from '../NucleonElement/types';
 import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
 import { Tabs } from '../../private/Tabs/Tabs';
 import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
 import { DetailsElement } from '@vaadin/vaadin-details';
+import { RadioButtonElement } from '@vaadin/vaadin-radio-button';
 import memoize from 'lodash-es/memoize';
 import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
 
@@ -40,6 +41,7 @@ export class TemplateConfigForm extends Base<Item> {
       __hiddenProductOptions: { type: Array, attribute: false },
       __enabledAnalytics: { type: Boolean, attribute: false },
       __includeViaLoader: { type: Boolean, attribute: false },
+      __json: { type: Object, attribute: false },
     };
   }
 
@@ -51,7 +53,7 @@ export class TemplateConfigForm extends Base<Item> {
       'foxy-spinner': customElements.get('foxy-spinner'),
       'iron-icon': customElements.get('iron-icon'),
       'vaadin-button': customElements.get('vaadin-button'),
-      'vaadin-radio-button': customElements.get('vaadin-radio-button'),
+      'vaadin-radio-button': RadioButtonElement,
       'vaadin-radio-group': customElements.get('vaadin-radio-group'),
       'vaadin-text-area': customElements.get('vaadin-text-area'),
       'vaadin-text-field': customElements.get('vaadin-text-field'),
@@ -59,6 +61,7 @@ export class TemplateConfigForm extends Base<Item> {
       'vaadin-details': DetailsElement,
       'x-checkbox': Checkbox,
       'x-group': Group,
+      'x-choice': Choice,
       'x-tabs': Tabs,
     };
   }
@@ -70,6 +73,12 @@ export class TemplateConfigForm extends Base<Item> {
     ];
   }
 
+  // This private variable stores as an object the value of this.form.json,
+  // which is a stringified object.
+  //
+  // In order to preserve sync between the string and the object use the
+  // __getJsonAttribute and __setJsonAttribute instead of interacting directly
+  // with this variable.
   private __json: TemplateConfigJson | undefined;
 
   private __cacheErrors = [];
@@ -95,33 +104,15 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __hiddenProductOptions: string[] = [];
 
-  private __renderTabs = (tabs: Tab[]) => {
-    return html`
-      <div class="pt-m">
-        <x-tabs size=${tabs.length} ?disabled=${!this.in({ idle: 'snapshot' })}>
-          ${tabs.map(
-            (tab, index) => html`
-              <foxy-i18n
-                data-testclass="i18n"
-                slot="tab-${index}"
-                lang=${this.lang}
-                key=${tab.title}
-                ns=${this.ns}
-              >
-              </foxy-i18n>
-              <div slot="panel-${index}">${tab.content}</div>
-            `
-          )}
-        </x-tabs>
-      </div>
-    `;
-  };
-
   private __customConfig: any = {};
+
+  private __stringifying = false;
+
+  private __hiddenOptionsElement: Element | undefined;
 
   constructor() {
     super();
-    this.addEventListener('fetch', (ev: Event) => {
+    this.addEventListener('update', (ev: Event) => {
       if (this.form && this.form.json) {
         this.__json = JSON.parse(this.form.json);
       }
@@ -136,118 +127,42 @@ export class TemplateConfigForm extends Base<Item> {
     return html` ${tabs.length === 0 ? '' : this.__renderTabs(tabs)} `;
   }
 
+  firstUpdated() {
+    const el = this.shadowRoot?.querySelector('#hidden_product_options');
+    if (el) {
+      this.__hiddenOptionsElement = el;
+    }
+  }
+
+  private __renderTabs(tabs: Array<Tab>): TemplateResult {
+    return html` ${this.__stringifying}
+      <div class="pt-m">
+        <x-tabs size="${tabs.length}">
+          ${tabs.map(
+            (tab, index) => html`
+              <foxy-i18n
+                data-testclass="i18n"
+                slot="tab-${index}"
+                lang="${this.lang}"
+                key="${tab.title}"
+                ns="${this.ns}"
+              ></foxy-i18n>
+              <div slot="panel-${index}">${tab.content}</div>
+            `
+          )}
+        </x-tabs>
+      </div>`;
+  }
+
   private __renderYourWebsite() {
     return html`
-      ${this.__renderAnalytics()}
-      <div class="p-m">
-        <x-checkbox ?checked=${this.__getJsonAttribute('debug-usage') == 'required'}>
-          <foxy-i18n key="debug-usage" lang=${this.lang} ns=${this.ns}></foxy-i18n>
-        </x-checkbox>
-      </div>
-      <vaadin-text-area class="w-full" label=${this.t('custom_config')}> </vaadin-text-area>
+      ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()}
+      ${this.__renderYourWebsiteCustomVariables()}
     `;
   }
 
   private __renderCart() {
-    return html`
-      <x-group>
-        <foxy-i18n slot="header" key="cart-display" ns=${this.ns}></foxy-i18n>
-        ${this.__renderCartConfig()}
-      </x-group>
-    `;
-  }
-
-  private __renderCartConfig() {
-    return html`<x-group>
-        ${this.__renderCombo('cart_type', ['default', 'fullpage', 'custom'])}
-        <vaadin-details>
-          <foxy-i18n slot="summary" key="cart-display" ns=${this.ns}></foxy-i18n>
-          <div class="p-m">
-            ${this.__renderCombo(['cart_display_config', 'usage'], ['none', 'required'])}
-            <div class="grid grid-cols-2 gap-m">
-              ${[
-                '--product--',
-                'product_weight',
-                'product_category',
-                'product_code',
-                'product_options',
-                '--subscription--',
-                'sub_frequency',
-                'sub_startdate',
-                'sub_nextdate',
-                'enddate',
-              ].map(i =>
-                i.startsWith('--')
-                  ? html` <foxy-i18n
-                      class="col-span-2"
-                      key=${i.replace(/-/g, '')}
-                      ns=${this.ns}
-                    ></foxy-i18n>`
-                  : this.__renderCheckbox(['cart_display_config', `show_${i}`])
-              )}
-            </div>
-            <vaadin-details>
-              <foxy-i18n
-                slot="summary"
-                key="cart_display_config.hidden_product_options"
-                ns=${this.ns}
-              ></foxy-i18n>
-              <vaadin-button @click=${this.__addHiddenProductOption}>
-                <iron-icon icon="icons:add" slot="prefix"></iron-icon>
-                <foxy-i18n key="add-hidden-product" ns=${this.ns}></foxy-i18n>
-              </vaadin-button>
-              ${this.__hiddenProductOptions.map(
-                (e, i) => html` <vaadin-text-field class="w-full pt-s"> </vaadin-text-field> `
-              )}
-            </vaadin-details>
-          </div>
-        </vaadin-details>
-      </x-group>
-      ${['header', 'footer', 'checkout_fields', 'multiship_checkout_fields'].map(e =>
-        this.__renderTextAreaField(['custom_script_values', e])
-      )}
-      <div class="p-m">
-        <vaadin-combo-box
-          label=${this.t('foxycomplete.usage')}
-          value=${this.__getJsonAttribute('foxycomplete-usage') ?? ''}
-          .items=${['none', 'required']}
-        ></vaadin-combo-box>
-        <div class="grid grid-cols-2 gap-m">
-          <x-checkbox>
-            <foxy-i18n ns=${this.ns} key="foxycomplete.show_combobox"></foxy-i18n>
-          </x-checkbox>
-          <x-checkbox>
-            <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
-          </x-checkbox>
-          ${this.__renderTextField(['foxycomplete', 'combobox_open'])}
-          ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
-        </div>
-      </div>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="debug-usage"
-            .items=${['none', 'shipping', 'billing', 'both', 'independent']}
-          ></vaadin-combo-box>
-          ${['shipping', 'billing'].map(
-            e => html`
-              <vaadin-combo-box
-                label="${e}_filter_type"
-                .items=${['blacklist', 'whitelist']}
-              ></vaadin-combo-box>
-              <vaadin-text-field label="${e}_filter_values"> </vaadin-text-field>
-            `
-          )}
-        </div>
-      </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="postalcode_lookup"
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
-        </div>
-      </x-group> `;
+    return html` ${this.__renderCartType()} ${this.__renderCartConfig()} `;
   }
 
   private __renderCheckout() {
@@ -371,38 +286,7 @@ export class TemplateConfigForm extends Base<Item> {
     `;
   }
 
-  private __getJsonAttribute(attribute: string | Array<string>): any {
-    if (this.form && this.form.json) {
-      const o = JSON.parse(this.form.json);
-      if (typeof attribute === 'string') {
-        return o[attribute];
-      } else {
-        return attribute.reduce((acc, cur) => acc[cur], o);
-      }
-    }
-  }
-
-  private __setJsonAttribute(attribute: string | Array<string>, value: any): void {
-    if (this.form && this.form.json) {
-      const o = { ...JSON.parse(this.form.json), attribute: value };
-      if (typeof attribute === 'string') {
-        o[attribute] = value;
-      } else {
-        this.__deepSet(o, attribute, value);
-      }
-      this.form.json = JSON.stringify(o);
-    }
-  }
-
-  private __deepSet(obj: Record<string, any>, keyList: string[], value: any) {
-    let cursor = obj;
-    for (let k = 0; k < keyList.length - 1; k++) {
-      cursor = cursor[keyList[k]];
-    }
-    cursor[keyList[keyList.length - 1]] = value;
-  }
-
-  __renderAnalytics(): TemplateResult {
+  private __renderYourWebsiteAnalytics(): TemplateResult {
     return html`
       <x-group frame>
         <div class="p-m">
@@ -441,6 +325,199 @@ export class TemplateConfigForm extends Base<Item> {
           </x-checkbox>
         </div>
       </x-group>
+    `;
+  }
+
+  private __renderYourWebsiteDebug() {
+    return html`
+      <div class="p-m">
+        <x-checkbox ?checked=${this.__getJsonAttribute('debug-usage') == 'required'}>
+          <foxy-i18n key="debug-usage" lang=${this.lang} ns=${this.ns}></foxy-i18n>
+        </x-checkbox>
+      </div>
+    `;
+  }
+
+  private __renderYourWebsiteCustomVariables() {
+    return html`
+      <vaadin-text-area class="w-full" label=${this.t('custom_config')}> </vaadin-text-area>
+    `;
+  }
+
+  private __renderCartConfig() {
+    const cartDisplayConfig =
+      this.__getJsonAttribute(['cart_display_config', 'usage']) === 'required';
+    return html` <x-group frame>
+        <div class="p-m">
+          <x-checkbox
+            ?checked=${cartDisplayConfig}
+            @change=${this.__handleChangeDisplayConfigUsage}
+          >
+            <foxy-i18n key="cart_display_config.usage" ns=${this.ns}></foxy-i18n>
+          </x-checkbox>
+          <div class="grid grid-cols-2 gap-xs">
+            ${[
+              '--product--',
+              'product_weight',
+              'product_category',
+              'product_code',
+              'product_options',
+              '--subscription--',
+              'sub_frequency',
+              'sub_startdate',
+              'sub_nextdate',
+              'enddate',
+            ].map(i =>
+              i.startsWith('--')
+                ? html` <foxy-i18n
+                    class="col-span-2"
+                    key=${i.replace(/-/g, '')}
+                    ns=${this.ns}
+                  ></foxy-i18n>`
+                : html` <x-checkbox
+                    class="mt-xxs ${!cartDisplayConfig ? 'text-disabled' : ''}"
+                    ?checked=${this.__getJsonAttribute('cart_display_config')
+                      ? this.__getJsonAttribute(['cart_display_config', `show_${i}`])
+                      : false}
+                    ?disabled=${!cartDisplayConfig}
+                  >
+                    <foxy-i18n
+                      class="${!cartDisplayConfig ? 'text-disabled' : ''}"
+                      key="cart_display_config.show_${i}"
+                      lang=${this.lang}
+                      ns=${this.ns}
+                    ></foxy-i18n>
+                  </x-checkbox>`
+            )}
+          </div>
+          ${this.__renderCartConfigHiddenOptions()}
+        </div>
+      </x-group>
+      ${this.__renderCartConfigHeaderFooter()} ${this.__renderCartConfigFoxyComplete()}
+      <x-group frame>
+        <div class="p-m">
+          <vaadin-combo-box
+            label="debug-usage"
+            .items=${['none', 'shipping', 'billing', 'both', 'independent']}
+          ></vaadin-combo-box>
+          ${['shipping', 'billing'].map(
+            e => html`
+              <vaadin-combo-box
+                label="${e}_filter_type"
+                .items=${['blacklist', 'whitelist']}
+              ></vaadin-combo-box>
+              <vaadin-text-field label="${e}_filter_values"> </vaadin-text-field>
+            `
+          )}
+        </div>
+      </x-group>
+      <x-group frame>
+        <div class="p-m">
+          <vaadin-combo-box
+            label="postalcode_lookup"
+            .items=${['none', 'required']}
+          ></vaadin-combo-box>
+        </div>
+      </x-group>`;
+  }
+
+  private __renderCartConfigHeaderFooter() {
+    return html` <x-group frame class="mt-m">
+      <foxy-i18n
+        slot="header"
+        key="custom_script_values.title"
+        lang=${this.lang}
+        ns=${this.ns}
+      ></foxy-i18n>
+      <div class="p-s">
+        ${['header', 'footer' /*, 'checkout_fields', 'multiship_checkout_fields'*/].map(e =>
+          this.__renderTextAreaField(['custom_script_values', e])
+        )}
+      </div>
+    </x-group>`;
+  }
+
+  private __renderCartConfigFoxyComplete() {
+    return html`
+      <div class="p-m">
+        <vaadin-combo-box
+          label=${this.t('foxycomplete.usage')}
+          value=${this.__getJsonAttribute('foxycomplete-usage') ?? ''}
+          .items=${['none', 'required']}
+        ></vaadin-combo-box>
+        <div class="grid grid-cols-2 gap-m">
+          <x-checkbox>
+            <foxy-i18n ns=${this.ns} key="foxycomplete.show_combobox"></foxy-i18n>
+          </x-checkbox>
+          <x-checkbox>
+            <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
+          </x-checkbox>
+          ${this.__renderTextField(['foxycomplete', 'combobox_open'])}
+          ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
+        </div>
+      </div>
+    `;
+  }
+
+  private __renderCartConfigHiddenOptions() {
+    let hiddenProductOptions = this.__getJsonAttribute([
+      'cart_display_config',
+      'hidden_product_options',
+    ]);
+    if (hiddenProductOptions === undefined) {
+      hiddenProductOptions = [];
+    }
+    return html` <x-group frame>
+      <div class="p-s">
+        <foxy-i18n
+          slot="header"
+          key="cart_display_config.hidden_product_options"
+          ns=${this.ns}
+        ></foxy-i18n>
+        <div id="hidden_product_options">
+          ${hiddenProductOptions.map(
+            (e: string, i: number) => html`
+              <vaadin-text-field
+                data-hidden-option
+                name="hidden_product_options-${i}"
+                .value=${hiddenProductOptions[i]}
+                @change=${this.__handleChangeHiddenProductOptions}
+                class="w-full pt-s"
+              >
+              </vaadin-text-field>
+            `
+          )}
+          <vaadin-text-field
+            data-hidden-option
+            name="hidden_product_options-${hiddenProductOptions.length}"
+            @change=${(ev: CustomEvent) => {
+              this.__handleChangeHiddenProductOptions();
+              this.__blank(ev);
+            }}
+            class="w-full pt-s"
+          >
+          </vaadin-text-field>
+        </div>
+      </div>
+    </x-group>`;
+  }
+
+  private __blank(ev: CustomEvent): void {
+    (ev.target as HTMLInputElement).value = '';
+  }
+
+  private __renderCartType(): TemplateResult {
+    return html`
+      <x-choice
+        data-testid="cart-type"
+        lang=${this.lang}
+        ns=${this.ns}
+        .items=${['default', 'fullpage', 'custom']}
+        .value=${this.__getJsonAttribute('cart_type')}
+        @change=${this.__handleChangeCartType}
+        .getText=${(v: string) => this.t(`cart_type.${v}`)}
+      >
+      </x-choice>
     `;
   }
 
@@ -549,28 +626,78 @@ export class TemplateConfigForm extends Base<Item> {
     this.submit();
   }
 
-  private __handleConfirmCache(evt: CustomEvent) {
-    if (!evt.detail.cancelled) this.__handleCache();
+  private __handleChangeCartType(ev: CustomEvent) {
+    if (this.__json && ['fullpage', 'custom', 'default'].includes(ev.detail)) {
+      this.__json = { ...this.__json, cart_type: ev.detail };
+    }
   }
 
-  private async __handleCache() {
-    if (!(this.data && this.data._links && this.data._links['fx:cache'])) {
+  private __handleChangeDisplayConfigUsage(ev: CustomEvent) {
+    if (this.__json) {
+      this.__setJsonAttribute(['cart_display_config', 'usage'], ev.detail ? 'required' : 'none');
+    }
+  }
+
+  private __handleChangeHiddenProductOptions() {
+    const attr = ['cart_display_config', 'hidden_product_options'];
+    if (this.__hiddenOptionsElement) {
+      const newValue = Array.from(
+        this.__hiddenOptionsElement.querySelectorAll('[data-hidden-option]')
+      )
+        .map(e => (e as HTMLInputElement).value)
+        .filter((v: string) => !!v)
+        .filter((v: string) => !v.match(/^\s*$/));
+      this.__setJsonAttribute(attr, newValue);
+    }
+  }
+
+  private __getJsonAttribute(attribute: string | Array<string>): any {
+    this.__deStringify();
+    if (!this.__json) {
+      return undefined;
+    }
+    if (typeof attribute === 'string') {
+      return this.__json![attribute as keyof TemplateConfigJson];
+    } else {
+      return attribute.reduce((acc, cur) => (acc! as any)[cur], this.__json);
+    }
+  }
+
+  private __setJsonAttribute(attribute: string | Array<string>, value: any): void {
+    this.__deStringify();
+    if (!this.__json) {
       return;
     }
-    console.log(this.data._links['fx:cache'].href);
-    const result = await this._fetch(this.data._links['fx:cache'].href, {
-      body: '',
-      method: 'POST',
+    if (typeof attribute === 'string') {
+      this.__json![attribute as keyof TemplateConfigJson] = value as never;
+    } else {
+      this.__deepSet(this.__json as Record<string, any>, attribute, value);
+    }
+    this.__json = { ...this.__json };
+    this.__stringifying = true;
+    this.__stringify().then(() => {
+      this.__stringifying = false;
     });
-    if (result) {
-      const errorResult = result as any;
-      if (errorResult['_embedded'] && errorResult['embedded']['fx:errors']) {
-        this.__cacheErrors = errorResult['fx:errors'].map((i: { message: string }) => i.message);
-      } else {
-        this.__cacheSuccess = true;
-        this.__cacheErrors = [];
-        setTimeout(() => (this.__cacheSuccess = false), 3000);
+  }
+
+  private __deepSet(obj: Record<string, any>, keyList: string[], value: any) {
+    let cursor = obj;
+    for (let k = 0; k < keyList.length - 1; k++) {
+      cursor = cursor[keyList[k]];
+    }
+    cursor[keyList[keyList.length - 1]] = value;
+  }
+
+  private __deStringify() {
+    if (!this.__json) {
+      if (this.form.json) {
+        this.__json = JSON.parse(this.form.json);
       }
     }
+  }
+
+  private async __stringify() {
+    this.form.json = JSON.stringify(this.__json);
+    return true;
   }
 }
