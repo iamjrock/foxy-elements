@@ -1,0 +1,936 @@
+{
+    "_links": {
+        "curies": [
+            {
+                "name": "fx",
+                "href": "https://api.foxycart.com/rels/{rel}",
+                "templated": true
+            }
+        ],
+        "self": {
+            "href": "https://api.foxycart.com/property_helpers/countries",
+            "title": "List of valid country values for any country setting such as the Store resource store_country."
+        },
+        "fx:property_helpers": {
+            "href": "https://api.foxycart.com/property_helpers",
+            "title": "Property Helpers Home"
+        }
+    },
+    "message": "The values listed here are the correct values for the Store store_country field. The values are listed in the format value => description.",
+    "values": {
+        "AF": {
+            "default": "Afghanistan",
+            "cc2": "AF",
+            "cc3": "AFG",
+            "alternate_values": [
+                "Afghanestan",
+                "افغانستان"
+            ],
+            "boost": 1,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "BQ": {
+            "default": "Bonaire, Sint Eustatius and Saba",
+            "cc2": "BQ",
+            "cc3": "BES",
+            "alternate_values": [
+                "Caribbean Netherlands",
+                "Caribisch Nederland",
+                "Bonaire",
+                "Boneiru",
+                "Sint Eustatius",
+                "Statia",
+                "Statius",
+                "Saba"
+            ],
+            "boost": 1.5,
+            "regions": {
+                "BO": {
+                    "n": "Bonaire",
+                    "c": "BO",
+                    "alt": [
+                        "Boneiru"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "SA": {
+                    "n": "Saba",
+                    "c": "SA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "SE": {
+                    "n": "Sint Eustatius",
+                    "c": "SE",
+                    "alt": [
+                        "Statia",
+                        "Statius"
+                    ],
+                    "boost": 1,
+                    "active": true
+                }
+            },
+            "regions_required": true,
+            "regions_type": "state",
+            "active": true
+        },
+        "BW": {
+            "default": "Botswana",
+            "cc2": "BW",
+            "cc3": "BWA",
+            "alternate_values": [],
+            "boost": 1,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "CA": {
+            "default": "Canada",
+            "cc2": "CA",
+            "cc3": "CAN",
+            "alternate_values": [],
+            "boost": 4,
+            "regions": {
+                "AB": {
+                    "n": "Alberta",
+                    "c": "AB",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "BC": {
+                    "n": "British Columbia",
+                    "c": "BC",
+                    "alt": [
+                        "la Colombie-Britannique"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "MB": {
+                    "n": "Manitoba",
+                    "c": "MB",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NB": {
+                    "n": "New Brunswick",
+                    "c": "NB",
+                    "alt": [
+                        "Nouveau-Brunswick"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "NL": {
+                    "n": "Newfoundland and Labrador",
+                    "c": "NL",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NT": {
+                    "n": "Northwest Territories",
+                    "c": "NT",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NS": {
+                    "n": "Nova Scotia",
+                    "c": "NS",
+                    "alt": [
+                        "Nouvelle-Écosse",
+                        "Alba Nuadh"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "NU": {
+                    "n": "Nunavut",
+                    "c": "NU",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "ON": {
+                    "n": "Ontario",
+                    "c": "ON",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "PE": {
+                    "n": "Prince Edward Island",
+                    "c": "PE",
+                    "alt": [
+                        "Île-du-Prince-Édouard",
+                        "Eilean a' Phrionnsa"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "QC": {
+                    "n": "Quebec",
+                    "c": "QC",
+                    "alt": [
+                        "Québec"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "SK": {
+                    "n": "Saskatchewan",
+                    "c": "SK",
+                    "alt": [],
+                    "boost": 2,
+                    "active": true
+                },
+                "YT": {
+                    "n": "Yukon",
+                    "c": "YT",
+                    "alt": [
+                        "Yukon Territory"
+                    ],
+                    "boost": 1,
+                    "active": true
+                }
+            },
+            "regions_required": true,
+            "regions_type": "province",
+            "active": true
+        },
+        "CV": {
+            "default": "Cape Verde",
+            "cc2": "CV",
+            "cc3": "CPV",
+            "alternate_values": [
+                "Cabo Verde"
+            ],
+            "boost": 0.4,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "FR": {
+            "default": "France",
+            "cc2": "FR",
+            "cc3": "FRA",
+            "alternate_values": [],
+            "boost": 3.5,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "DE": {
+            "default": "Germany",
+            "cc2": "DE",
+            "cc3": "DEU",
+            "alternate_values": [
+                "Deutschland"
+            ],
+            "boost": 4,
+            "regions": {
+                "BW": {
+                    "n": "Baden-Wuerttemberg",
+                    "c": "BW",
+                    "alt": [
+                        "Baden-Württemberg"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "BY": {
+                    "n": "Bayern",
+                    "c": "BY",
+                    "alt": [
+                        "Bavaria",
+                        "Freistaat Bayern"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "BE": {
+                    "n": "Berlin",
+                    "c": "BE",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "BB": {
+                    "n": "Brandenburg",
+                    "c": "BB",
+                    "alt": [
+                        "Bramborska",
+                        "Braniborska"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "HB": {
+                    "n": "Bremen",
+                    "c": "HB",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "HH": {
+                    "n": "Hamburg",
+                    "c": "HH",
+                    "alt": [
+                        "Hamborg"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "HE": {
+                    "n": "Hessen",
+                    "c": "HE",
+                    "alt": [
+                        "Hesse",
+                        "Hessia"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "MV": {
+                    "n": "Mecklenburg-Vorpommern",
+                    "c": "MV",
+                    "alt": [
+                        "Mecklenburg-Western Pomerania"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "NI": {
+                    "n": "Niedersachsen",
+                    "c": "NI",
+                    "alt": [
+                        "Neddersassen",
+                        "Lower Saxony"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "NW": {
+                    "n": "Nordrhein-Westfalen",
+                    "c": "NW",
+                    "alt": [
+                        "North Rhine-Westphalia"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "RP": {
+                    "n": "Rheinland-Pfalz",
+                    "c": "RP",
+                    "alt": [
+                        "Rhineland-Palatinate"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "SL": {
+                    "n": "Saarland",
+                    "c": "SL",
+                    "alt": [
+                        "Sarre"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "SN": {
+                    "n": "Sachsen",
+                    "c": "SN",
+                    "alt": [
+                        "Saxony",
+                        "Sakska"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "ST": {
+                    "n": "Sachsen-Anhalt",
+                    "c": "ST",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "SH": {
+                    "n": "Schleswig-Holstein",
+                    "c": "SH",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "TH": {
+                    "n": "Thueringen",
+                    "c": "TH",
+                    "alt": [
+                        "Thuringia",
+                        "Thüringen"
+                    ],
+                    "boost": 1,
+                    "active": true
+                }
+            },
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "GH": {
+            "default": "Ghana",
+            "cc2": "GH",
+            "cc3": "GHA",
+            "alternate_values": [],
+            "boost": 1.5,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "GR": {
+            "default": "Greece",
+            "cc2": "GR",
+            "cc3": "GRC",
+            "alternate_values": [
+                "Hellas",
+                "Ελλάς",
+                "Ellada",
+                "Ελλάδα"
+            ],
+            "boost": 2.5,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "HK": {
+            "default": "Hong Kong",
+            "cc2": "HK",
+            "cc3": "HKG",
+            "alternate_values": [],
+            "boost": 3,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "GB": {
+            "default": "United Kingdom",
+            "cc2": "GB",
+            "cc3": "GBR",
+            "alternate_values": [
+                "Great Britain",
+                "England",
+                "Northern Ireland",
+                "Britain",
+                "UK"
+            ],
+            "boost": 4,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "county",
+            "active": true
+        },
+        "US": {
+            "default": "United States",
+            "cc2": "US",
+            "cc3": "USA",
+            "alternate_values": [
+                "USA",
+                "United States of America",
+                "America"
+            ],
+            "boost": 4.5,
+            "regions": {
+                "AL": {
+                    "n": "Alabama",
+                    "c": "AL",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "AK": {
+                    "n": "Alaska",
+                    "c": "AK",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "AS": {
+                    "n": "American Samoa",
+                    "c": "AS",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "AZ": {
+                    "n": "Arizona",
+                    "c": "AZ",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "AR": {
+                    "n": "Arkansas",
+                    "c": "AR",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "AF": {
+                    "n": "Armed Forces Africa",
+                    "c": "AF",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "AA": {
+                    "n": "Armed Forces Americas",
+                    "c": "AA",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "AC": {
+                    "n": "Armed Forces Canada",
+                    "c": "AC",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "AE": {
+                    "n": "Armed Forces Europe",
+                    "c": "AE",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "AM": {
+                    "n": "Armed Forces Middle East",
+                    "c": "AM",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "AP": {
+                    "n": "Armed Forces Pacific",
+                    "c": "AP",
+                    "alt": [],
+                    "boost": 0.4,
+                    "active": true
+                },
+                "CA": {
+                    "n": "California",
+                    "c": "CA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "CO": {
+                    "n": "Colorado",
+                    "c": "CO",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "CT": {
+                    "n": "Connecticut",
+                    "c": "CT",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "DE": {
+                    "n": "Delaware",
+                    "c": "DE",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "DC": {
+                    "n": "Washington DC",
+                    "c": "DC",
+                    "alt": [
+                        "District of Columbia"
+                    ],
+                    "boost": 1,
+                    "active": true
+                },
+                "FM": {
+                    "n": "Federated States Of Micronesia",
+                    "c": "FM",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "FL": {
+                    "n": "Florida",
+                    "c": "FL",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "GA": {
+                    "n": "Georgia",
+                    "c": "GA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "GU": {
+                    "n": "Guam",
+                    "c": "GU",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "HI": {
+                    "n": "Hawaii",
+                    "c": "HI",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "ID": {
+                    "n": "Idaho",
+                    "c": "ID",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "IL": {
+                    "n": "Illinois",
+                    "c": "IL",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "IN": {
+                    "n": "Indiana",
+                    "c": "IN",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "IA": {
+                    "n": "Iowa",
+                    "c": "IA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "KS": {
+                    "n": "Kansas",
+                    "c": "KS",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "KY": {
+                    "n": "Kentucky",
+                    "c": "KY",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "LA": {
+                    "n": "Louisiana",
+                    "c": "LA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "ME": {
+                    "n": "Maine",
+                    "c": "ME",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MH": {
+                    "n": "Marshall Islands",
+                    "c": "MH",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MD": {
+                    "n": "Maryland",
+                    "c": "MD",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MA": {
+                    "n": "Massachusetts",
+                    "c": "MA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MI": {
+                    "n": "Michigan",
+                    "c": "MI",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MN": {
+                    "n": "Minnesota",
+                    "c": "MN",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MS": {
+                    "n": "Mississippi",
+                    "c": "MS",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MO": {
+                    "n": "Missouri",
+                    "c": "MO",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MT": {
+                    "n": "Montana",
+                    "c": "MT",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NE": {
+                    "n": "Nebraska",
+                    "c": "NE",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NV": {
+                    "n": "Nevada",
+                    "c": "NV",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NH": {
+                    "n": "New Hampshire",
+                    "c": "NH",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NJ": {
+                    "n": "New Jersey",
+                    "c": "NJ",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NM": {
+                    "n": "New Mexico",
+                    "c": "NM",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NY": {
+                    "n": "New York",
+                    "c": "NY",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "NC": {
+                    "n": "North Carolina",
+                    "c": "NC",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "ND": {
+                    "n": "North Dakota",
+                    "c": "ND",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "MP": {
+                    "n": "Northern Mariana Islands",
+                    "c": "MP",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "OH": {
+                    "n": "Ohio",
+                    "c": "OH",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "OK": {
+                    "n": "Oklahoma",
+                    "c": "OK",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "OR": {
+                    "n": "Oregon",
+                    "c": "OR",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "PA": {
+                    "n": "Pennsylvania",
+                    "c": "PA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "PR": {
+                    "n": "Puerto Rico",
+                    "c": "PR",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "RI": {
+                    "n": "Rhode Island",
+                    "c": "RI",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "SC": {
+                    "n": "South Carolina",
+                    "c": "SC",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "SD": {
+                    "n": "South Dakota",
+                    "c": "SD",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "TN": {
+                    "n": "Tennessee",
+                    "c": "TN",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "TX": {
+                    "n": "Texas",
+                    "c": "TX",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "UT": {
+                    "n": "Utah",
+                    "c": "UT",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "VT": {
+                    "n": "Vermont",
+                    "c": "VT",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "VI": {
+                    "n": "Virgin Islands",
+                    "c": "VI",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "VA": {
+                    "n": "Virginia",
+                    "c": "VA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "WA": {
+                    "n": "Washington",
+                    "c": "WA",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "WV": {
+                    "n": "West Virginia",
+                    "c": "WV",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "WI": {
+                    "n": "Wisconsin",
+                    "c": "WI",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                },
+                "WY": {
+                    "n": "Wyoming",
+                    "c": "WY",
+                    "alt": [],
+                    "boost": 1,
+                    "active": true
+                }
+            },
+            "regions_required": true,
+            "regions_type": "state",
+            "active": true
+        },
+        "UZ": {
+            "default": "Uzbekistan",
+            "cc2": "UZ",
+            "cc3": "UZB",
+            "alternate_values": [
+                "O'zbekiston"
+            ],
+            "boost": 0.4,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        },
+        "ZW": {
+            "default": "Zimbabwe",
+            "cc2": "ZW",
+            "cc3": "ZWE",
+            "alternate_values": [],
+            "boost": 0.7,
+            "regions": [],
+            "regions_required": false,
+            "regions_type": "state",
+            "active": true
+        }
+    }
+}
