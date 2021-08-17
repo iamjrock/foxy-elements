@@ -43,7 +43,8 @@
   "default": "Default",
   "debug-usage": "Log debug messages to the browser's console.",
   "foxycomplete": {
-    "usage": "Foxycomplete usage",
+    "title": "Autocomplete",
+    "usage": "Autocomplete locations",
     "show_flags": "Show country flags",
     "show_combobox": "Show combo box",
     "combobox_open": "open icon",
@@ -51,6 +52,12 @@
   },
   "fullpage": "Full page",
   "none": "None",
+  "location_filtering": {
+    "title": "Location filtering",
+    "independently": "Configure shipping and billing filters indepedently",
+    "whitelist": "Allow the selected locations",
+    "blacklist": "Disallow the selected locations"
+  },
   "product": "Product",
   "required": "Required",
   "subscription": "Subscription",
