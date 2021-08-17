@@ -1,6 +1,7 @@
 import Dexie from 'dexie';
 import IDBExportImport from 'indexeddb-export-import';
 import dump from './dump.json';
+import countries from './countries.json';
 
 class DemoDatabase extends Dexie {
   static async fill(db: IDBDatabase): Promise<void> {
@@ -44,6 +45,8 @@ class DemoDatabase extends Dexie {
 
   users: Dexie.Table<any, number>;
 
+  countries: any;
+
   constructor() {
     super('foxy_demo_db');
 
@@ -84,6 +87,7 @@ class DemoDatabase extends Dexie {
     this.templateConfig = this.table('template_config');
     this.transactions = this.table('transactions');
     this.users = this.table('users');
+    this.countries = countries.values;
   }
 }
 

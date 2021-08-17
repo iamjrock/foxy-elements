@@ -3,6 +3,7 @@ import { DemoDatabase, db, whenDbReady } from '../DemoDatabase';
 import { HALJSONResource } from '../../elements/public/NucleonElement/types';
 import { composeCartTemplate } from './composers/composeCartTemplate';
 import { composeCollection } from './composers/composeCollection';
+import { composeCountries } from './composers/composeCountries';
 import { composeCustomer } from './composers/composeCustomer';
 import { composeCustomerAddress } from './composers/composeCustomerAddress';
 import { composeCustomerAttribute } from './composers/composeCustomerAttribute';
@@ -20,6 +21,21 @@ import { composeTemplateCache } from './composers/composeTemplateCache';
 
 const endpoint = 'https://demo.foxycart.com/s/admin';
 export { endpoint, router, db, whenDbReady, DemoDatabase };
+
+interface Country {
+  default: string;
+  cc2: string;
+  cc3: string;
+  alternate_values: string[];
+  boost: number;
+  has_regions?: boolean;
+  regions?:
+    | []
+    | Record<string, { n: string; c: string; alt: string[]; boost: number; active: boolean }>;
+  regions_required: boolean;
+  regions_type: string;
+  active: boolean;
+}
 
 // subscriptions
 
@@ -647,6 +663,22 @@ async function queryCountAndWhere(
 function paginateQuery(query: Collection<any, any>, pagination = { limit: 20, offset: 0 }) {
   return query.offset(pagination.offset).limit(pagination.limit).toArray();
 }
+
+// helper routes
+router.get('/s/property_helpers/countries', async ({ request }) => {
+  const searchParams = new URL(request.url).searchParams;
+  const countries = db.countries;
+  if (!searchParams.has('include_regions')) {
+    // Remove the list of regions if asked by the client
+    for (const v of Object.values(countries)) {
+      const country = v as Country;
+      // an empty array stands for no region
+      country.has_regions = !Array.isArray(country.regions) || country.regions.length > 0;
+      delete country.regions;
+    }
+  }
+  return new Response(JSON.stringify(composeCountries(countries)));
+});
 
 // special routes
 
