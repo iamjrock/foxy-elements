@@ -693,7 +693,7 @@ function paginateQuery(query: Collection<any, any>, pagination = { limit: 20, of
 }
 
 // helper routes
-router.get('/s/property_helpers/countries', async ({ request }) => {
+router.get('/property_helpers/countries', async ({ request }) => {
   const searchParams = new URL(request.url).searchParams;
   const countries = db.countries;
   if (!searchParams.has('include_regions')) {
