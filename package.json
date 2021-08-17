@@ -51,7 +51,7 @@
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
-    "@open-wc/eslint-config": "^3.0.0",
+    "@foxy.io/eslint-config": "^1.0.0",
     "@open-wc/testing": "2.5.32",
     "@rollup/plugin-alias": "^3.1.2",
     "@rollup/plugin-babel": "^5.2.3",
@@ -82,9 +82,9 @@
     "babel-plugin-template-html-minifier": "^4.1.0",
     "change-case": "^4.1.1",
     "core-js": "^3.6.5",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.8.1",
     "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-babel": "^5.3.1",
     "eslint-plugin-html": "^6.1.2",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-sort-class-members": "^1.8.0",
@@ -143,5 +143,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

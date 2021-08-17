@@ -1,10 +1,10 @@
-import { expect } from '@open-wc/testing';
+import { ErrorScreen, ErrorScreenReloadEvent, FriendlyError } from './ErrorScreen';
+import { EventObject, createMachine } from 'xstate';
 import { fixture, oneEvent } from '@open-wc/testing-helpers';
 import { ButtonElement } from '@vaadin/vaadin-button';
-import { createModel } from '@xstate/test';
-import { createMachine, EventObject } from 'xstate';
 import { I18N } from '../I18N/I18N';
-import { ErrorScreen, ErrorScreenReloadEvent, FriendlyError } from './ErrorScreen';
+import { createModel } from '@xstate/test';
+import { expect } from '@open-wc/testing';
 
 class TestErrorScreen extends ErrorScreen {
   public get whenReady() {
@@ -14,6 +14,9 @@ class TestErrorScreen extends ErrorScreen {
 
 customElements.define('x-error-screen', TestErrorScreen);
 
+/**
+ * @param type
+ */
 function testType(type: TestErrorScreen['type']) {
   return async (element: TestErrorScreen) => {
     await element.updateComplete;
@@ -29,6 +32,9 @@ function testType(type: TestErrorScreen['type']) {
   };
 }
 
+/**
+ * @param reload
+ */
 function testReload(reload: TestErrorScreen['reload']) {
   return async (element: TestErrorScreen) => {
     await element.updateComplete;
@@ -44,7 +50,6 @@ function testReload(reload: TestErrorScreen['reload']) {
 }
 
 const machine = createMachine({
-  type: 'parallel',
   states: {
     reload: {
       initial: 'off',
@@ -71,13 +76,16 @@ const machine = createMachine({
       },
     },
   },
+  type: 'parallel',
 });
 
 const model = createModel<TestErrorScreen>(machine).withEvents({
-  ENABLE_RELOAD: {
-    exec: element => {
-      element.reload = true;
-      expect(element).to.have.property('reload', true);
+  CUSTOMIZE_TYPE: {
+    cases: [{ data: 'unauthorized' }, { data: 'setup_needed' }],
+    exec: (element, evt) => {
+      const type = (evt as EventObject & { data: TestErrorScreen['type'] }).data;
+      element.type = type;
+      expect(element).to.have.property('type', type);
     },
   },
   DISABLE_RELOAD: {
@@ -86,12 +94,10 @@ const model = createModel<TestErrorScreen>(machine).withEvents({
       expect(element).to.have.property('reload', false);
     },
   },
-  CUSTOMIZE_TYPE: {
-    cases: [{ data: 'unauthorized' }, { data: 'setup_needed' }],
-    exec: (element, evt) => {
-      const type = (evt as EventObject & { data: TestErrorScreen['type'] }).data;
-      element.type = type;
-      expect(element).to.have.property('type', type);
+  ENABLE_RELOAD: {
+    exec: element => {
+      element.reload = true;
+      expect(element).to.have.property('reload', true);
     },
   },
 });

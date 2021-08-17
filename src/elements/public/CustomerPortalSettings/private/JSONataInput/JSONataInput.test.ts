@@ -3,7 +3,7 @@ import { TextFieldElement } from '@vaadin/vaadin-text-field';
 import { createModel } from '@xstate/test';
 import { createMachine } from 'xstate';
 import { ChoiceChangeEvent } from '../../../../private/events';
-import { Choice } from '../../../../private/index';
+import { Choice } from '../../../../private';
 import { JSONataInput } from './JSONataInput';
 import { JSONataInputChangeEvent } from './JSONataInputChangeEvent';
 
@@ -23,33 +23,48 @@ const samples = {
   },
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: TestJSONataInput) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector);
 
   return {
     input: $('[data-testid=input]') as TextFieldElement | null,
-    choice: $('[data-testid=choice') as Choice,
+    choice: $('[data-testid=choice]') as Choice,
   };
 }
 
+/**
+ * @param element
+ */
 function testEnabled(element: TestJSONataInput) {
   const refs = getRefs(element);
   expect(refs.choice.disabled).to.be.false;
   expect(refs.input?.disabled).to.be.oneOf([false, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testDisabled(element: TestJSONataInput) {
   const refs = getRefs(element);
   expect(refs.choice.disabled).to.be.true;
   expect(refs.input?.disabled).to.be.oneOf([true, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testWildcard(element: TestJSONataInput) {
   const { choice, input } = getRefs(element);
   expect(choice.value).to.equal('all');
   expect(input).to.be.null;
 }
 
+/**
+ * @param element
+ */
 async function testCustom(element: TestJSONataInput) {
   const { choice, input } = getRefs(element);
 

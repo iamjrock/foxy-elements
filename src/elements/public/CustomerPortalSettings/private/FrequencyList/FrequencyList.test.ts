@@ -2,7 +2,7 @@ import { expect, fixture } from '@open-wc/testing';
 import { createModel } from '@xstate/test';
 import { createMachine } from 'xstate';
 import { FrequencyList } from './FrequencyList';
-import { List } from '../../../../private/index';
+import { List } from '../../../../private';
 import { ListChangeEvent } from '../../../../private/events';
 import { FrequencyListChangeEvent } from './FrequencyListChangeEvent';
 import { FrequencyInput } from '../FrequencyInput/FrequencyInput';
@@ -21,16 +21,22 @@ const samples = {
   newValue: '4d',
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: TestFrequencyList) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector);
 
   return {
     list: $('[data-testid=list]') as List,
     input: $('[data-testid=input]') as FrequencyInput,
-    button: $('[data-testid=button') as HTMLButtonElement,
+    button: $('[data-testid=button]') as HTMLButtonElement,
   };
 }
 
+/**
+ * @param element
+ */
 function testEnabled(element: TestFrequencyList) {
   const refs = getRefs(element);
 
@@ -39,6 +45,9 @@ function testEnabled(element: TestFrequencyList) {
   expect(refs.button.disabled).to.be.false;
 }
 
+/**
+ * @param element
+ */
 function testDisabled(element: TestFrequencyList) {
   const refs = getRefs(element);
 
@@ -47,10 +56,16 @@ function testDisabled(element: TestFrequencyList) {
   expect(refs.button.disabled).to.be.true;
 }
 
+/**
+ * @param element
+ */
 function testEmpty(element: TestFrequencyList) {
   expect(getRefs(element).list.value).to.be.empty;
 }
 
+/**
+ * @param element
+ */
 async function testItems(element: TestFrequencyList) {
   const { list, input, button } = getRefs(element);
 

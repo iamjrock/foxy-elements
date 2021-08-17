@@ -1,7 +1,6 @@
 import { Meta, Canvas, Story, ArgsTable } from '@web/storybook-prebuilt/addon-docs/blocks.js';
 import { html } from 'lit-html';
 import dedent from 'dedent';
-import { Donation } from './Donation';
 import './index';
 
 export const getTemplate = (args, children = '') => html`
@@ -48,11 +47,11 @@ The first thing you'll need to do is add the JavaScript call and basic donation 
 
 ```html
 <script type="module" src="https://unpkg.com/@foxy.io/elements/dist/cdn/foxy-donation.js"></script>
-<foxy-donation 
+<foxy-donation
   currency="usd"
-  amount="25" 
-  store="your-store-domain" 
-  name="One-Time Donation" 
+  amount="25"
+  store="your-store-domain"
+  name="One-Time Donation"
 >
 </foxy-donation>
 ```
@@ -94,12 +93,12 @@ If you'd like your visitors to be able to pick a donation amount from a list of 
 
 <Canvas
   mdxSource={dedent`
-    <foxy-donation 
-      currency="usd" 
+    <foxy-donation
+      currency="usd"
       amounts="[25, 50, 75]"
-      amount="25" 
-      store="jamstackecommerceexample" 
-      name="One-Time Donation" 
+      amount="25"
+      store="jamstackecommerceexample"
+      name="One-Time Donation"
     >
     </foxy-donation>
   `}
@@ -141,7 +140,7 @@ If an aggregated designation is to be the default choice, set the `designation` 
 <Canvas
   mdxSource={dedent`
     <foxy-donation
-      designations='["Medical Care", ["Nutrition", ["Daily Meals", "Infant Nutrition Aid", "Elderly Nutrition Suplement"]], "Housing"]'
+      designations='["Medical Care", ["Nutrition", ["Daily Meals", "Infant Nutrition Aid", "Elderly Nutrition Supplement"]], "Housing"]'
       designation="Nutrition: Daily Meals"
       currency="usd"
       amounts="[25, 50, 75]"
@@ -156,7 +155,7 @@ If an aggregated designation is to be the default choice, set the `designation` 
   <Story
     name="Designation options"
     args={{
-      designations: ['Medical Care', ['Nutrition', ['Daily Meals', 'Infant Nutrition Aid', 'Elderly Nutrition Suplement']], 'Housing'],
+      designations: ['Medical Care', ['Nutrition', ['Daily Meals', 'Infant Nutrition Aid', 'Elderly Nutrition Supplement']], 'Housing'],
       designation: 'Nutrition: Daily Meals',
       amounts: [25, 50, 75],
       custom: ['amount'],
@@ -514,12 +513,12 @@ Our elements are built with Vaadin Lumo theme and therefore share the list of CS
 
 ### Target
 
-Donation uses the `_top` target by default. This approach avoids issues related to the usage of the custome element within `<iframe>`.
+Donation uses the `_top` target by default. This approach avoids issues related to the usage of the custom element within `<iframe>`.
 
 The `target` attribute is responsible for setting the destination window for the forms response.
 Donation form uses a native form element to submit and provides it with its own `target` attribute.
 
-You may set a value for `target` to change the default behaviour, which is oppening the cart or checkout page top window.
+You may set a value for `target` to change the default behaviour, which is opening the cart or checkout page top window.
 
 Example: to display the checkout or the cart in the same frame as the form was, use:
 

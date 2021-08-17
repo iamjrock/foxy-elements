@@ -23,6 +23,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
    * Instances of this event are dispatched on an element whenever it changes its
    * state (e.g. when going from `busy` to `idle` or on `form` data change).
    * This event isn't cancelable, and it does not bubble.
+   *
    * @readonly
    */
   static readonly UpdateEvent = UpdateEvent;
@@ -31,6 +32,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
    * Creates a tagged [Rumour](https://sdk.foxy.dev/classes/_core_index_.rumour.html)
    * instance if it doesn't exist or returns cached one otherwise. NucleonElements
    * use empty Rumour group by default.
+   *
    * @readonly
    */
   static readonly Rumour = memoize<(group: string) => Rumour>(() => new Rumour());
@@ -38,6 +40,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
   /**
    * Universal [API](https://sdk.foxy.dev/classes/_core_index_.api.html) client
    * that dispatches cancellable `FetchEvent` on an element before each request.
+   *
    * @readonly
    */
   static readonly API = API;
@@ -159,6 +162,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   /**
    * Rumour group. Elements in different groups will not share updates. Empty by default.
+   *
    * @example element.group = 'my-group'
    */
   get group(): string {
@@ -173,6 +177,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   /**
    * Optional URL of the resource to load. Switches element to `idle.template` state if empty (default).
+   *
    * @example element.href = 'https://demo.foxycart.com/s/customer/attributes/0'
    */
   get href(): string {
@@ -191,6 +196,8 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   /**
    * Checks if this element is in the given state.
+   *
+   * @param stateValue
    * @example element.in({ idle: 'snapshot' })
    */
   in<TStateValue extends Nucleon.State<TData, string>['value']>(
@@ -201,6 +208,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   /**
    * Clears all edits and emits the `update` event.
+   *
    * @example element.undo()
    */
   undo(): void {
@@ -209,6 +217,8 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   /**
    * Applies an edit to the local resource snapshot or its template and emits the `update` event.
+   *
+   * @param data
    * @example element.edit({ first_name: 'Alex' })
    */
   edit(data: Partial<TData>): void {
@@ -218,6 +228,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
   /**
    * Submits the form, updating the resource if href isn't empty or creating it otherwise.
    * Emits multiple `update` events as element state changes. Has no effect on invalid forms.
+   *
    * @example element.submit()
    */
   submit(): void {
@@ -227,6 +238,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
   /**
    * Sends a DELETE request to `element.href` and clears local data on success.
    * Emits multiple update events as element state changes.
+   *
    * @example element.delete()
    */
   delete(): void {
@@ -251,14 +263,22 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     this.__destroyServer();
   }
 
-  /** Sends API request. Throws an error on non-2XX response. */
+  /**
+   * Sends API request. Throws an error on non-2XX response.
+   *
+   * @param {...any} args
+   */
   protected async _fetch(...args: Parameters<Window['fetch']>): Promise<TData> {
     const response = await new API(this).fetch(...args);
     if (!response.ok) throw response;
     return response.json();
   }
 
-  /** POSTs to `element.parent`, shares response with the Rumour group and returns parsed JSON. */
+  /**
+   * POSTs to `element.parent`, shares response with the Rumour group and returns parsed JSON.
+   *
+   * @param edits
+   */
   protected async _sendPost(edits: Partial<TData>): Promise<TData> {
     const body = JSON.stringify(edits);
     const data = await this._fetch(this.parent, { body, method: 'POST' });
@@ -267,7 +287,6 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     this.__destroyRumour();
     rumour.share({ data, related: [this.parent], source: data._links.self.href });
     this.__createRumour();
-
     return data;
   }
 
@@ -279,11 +298,14 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     this.__destroyRumour();
     rumour.share({ data, source: this.href });
     this.__createRumour();
-
     return data;
   }
 
-  /** PATCHes `element.href`, shares response with the Rumour group and returns parsed JSON. */
+  /**
+   * PATCHes `element.href`, shares response with the Rumour group and returns parsed JSON.
+   *
+   * @param edits
+   */
   protected async _sendPatch(edits: Partial<TData>): Promise<TData> {
     const body = JSON.stringify(edits);
     const data = await this._fetch(this.href, { body, method: 'PATCH' });
@@ -292,7 +314,6 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     this.__destroyRumour();
     rumour.share({ data, source: this.href });
     this.__createRumour();
-
     return data;
   }
 
@@ -304,7 +325,6 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     this.__destroyRumour();
     rumour.share({ data: null, source: this.href, related: [this.parent] });
     this.__createRumour();
-
     return data;
   }
 

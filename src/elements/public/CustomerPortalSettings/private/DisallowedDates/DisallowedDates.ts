@@ -1,35 +1,35 @@
-import { ScopedElementsMap } from '@open-wc/scoped-elements';
-import { ScopedElementsHost } from '@open-wc/scoped-elements/src/types';
 import '@polymer/iron-icon';
 import '@polymer/iron-icons';
+import { I18N, List, Skeleton } from '../../../../private';
+import { PropertyDeclarations, TemplateResult, html } from 'lit-element';
 import { ButtonElement } from '@vaadin/vaadin-button';
 import { DatePickerElement } from '@vaadin/vaadin-date-picker';
-import { html, PropertyDeclarations, TemplateResult } from 'lit-element';
+import { DisallowedDatesChangeEvent } from './DisallowedDatesChangeEvent';
+import { ListChangeEvent } from '../../../../private/events';
+import { ScopedElementsHost } from '@open-wc/scoped-elements/src/types';
+import { ScopedElementsMap } from '@open-wc/scoped-elements';
 import { Translatable } from '../../../../../mixins/translatable';
 import { classMap } from '../../../../../utils/class-map';
 import { parseDate } from '../../../../../utils/parse-date';
 import { translateDate } from '../../../../../utils/translate-date';
-import { ListChangeEvent } from '../../../../private/events';
-import { I18N, List, Skeleton } from '../../../../private/index';
-import { DisallowedDatesChangeEvent } from './DisallowedDatesChangeEvent';
 
 export class DisallowedDates extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'vaadin-date-picker': DatePickerElement,
-      'vaadin-button': ButtonElement,
-      'x-skeleton': Skeleton,
       'iron-icon': customElements.get('iron-icon'),
+      'vaadin-button': ButtonElement,
+      'vaadin-date-picker': DatePickerElement,
       'x-i18n': I18N,
       'x-list': List,
+      'x-skeleton': Skeleton,
     };
   }
 
   public static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
-      value: { type: Array },
       disabled: { type: Boolean },
+      value: { type: Array },
     };
   }
 
@@ -106,8 +106,8 @@ export class DisallowedDates extends Translatable {
                 key="ndmod.add_range_hint"
                 class=${classMap({
                   'block text-xs mt-xs': true,
-                  'text-tertiary': this.value.length < 20,
                   'text-primary': this.value.length >= 20,
+                  'text-tertiary': this.value.length < 20,
                 })}
               >
               </x-i18n>

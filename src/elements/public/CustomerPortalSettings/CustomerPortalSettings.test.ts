@@ -1,7 +1,6 @@
 import { expect, fixture, oneEvent } from '@open-wc/testing';
 import { ButtonElement } from '@vaadin/vaadin-button';
 import { createModel } from '@xstate/test';
-import { LitElement } from 'lit-element';
 import { createMachine } from 'xstate';
 import { RequestEvent } from '../../../events/request';
 import { bookmark } from '../../../mocks/FxBookmark';
@@ -13,10 +12,9 @@ import {
 
 import { store } from '../../../mocks/FxStore';
 import { FxCustomerPortalSettings } from '../../../types/hapi';
-import { getRefs, retry } from '../../../utils/test-utils';
-import { ErrorScreen, ErrorType } from '../../private/ErrorScreen/ErrorScreen';
-import { LoadingScreen } from '../../private/LoadingScreen/LoadingScreen';
-import { Switch, SwitchChangeEvent } from '../../private/Switch/Switch';
+import { getRefs } from '../../../utils/test-utils';
+import { ErrorScreen, ErrorType, LoadingScreen, Switch, SwitchChangeEvent } from '../../private';
+
 import { CustomerPortalSettings } from './CustomerPortalSettings';
 import { FrequencyModification } from './private/FrequencyModification/FrequencyModification';
 import { FrequencyModificationChangeEvent } from './private/FrequencyModification/FrequencyModificationChangeEvent';
@@ -72,10 +70,16 @@ interface Refs {
   save: ButtonElement;
 }
 
+/**
+ * @param getRef
+ */
 async function waitForRef(getRef: () => HTMLElement | null) {
   while (getRef() === null) await new Promise(resolve => setTimeout(resolve));
 }
 
+/**
+ * @param target
+ */
 function clearListeners(target: EventTarget) {
   target.removeEventListener('request', handleRequestWithError);
   target.removeEventListener('request', handleRequestWithSuccess);
@@ -88,6 +92,9 @@ function clearListeners(target: EventTarget) {
 
 // #region assertions
 
+/**
+ * @param type
+ */
 function testError(type: ErrorType) {
   return async (element: CustomerPortalSettings) => {
     await element.updateComplete;
@@ -95,6 +102,9 @@ function testError(type: ErrorType) {
   };
 }
 
+/**
+ * @param value
+ */
 function testContent(value: FxCustomerPortalSettings) {
   return async (element: CustomerPortalSettings) => {
     await element.updateComplete;
@@ -108,12 +118,18 @@ function testContent(value: FxCustomerPortalSettings) {
   };
 }
 
+/**
+ * @param element
+ */
 async function testLoading(element: CustomerPortalSettings) {
   await waitForRef(() => getRefs<Refs>(element).loading);
   await element.updateComplete;
   expect(getRefs<Refs>(element).loading).to.be.visible;
 }
 
+/**
+ * @param disabled
+ */
 function testDisabled(disabled: boolean) {
   return async (element: CustomerPortalSettings) => {
     await element.updateComplete;
@@ -127,6 +143,9 @@ function testDisabled(disabled: boolean) {
   };
 }
 
+/**
+ *
+ */
 function testPreset() {
   // TODO
 }
@@ -135,11 +154,17 @@ function testPreset() {
 
 // #region handlers
 
+/**
+ * @param evt
+ */
 function handleRequestWithError(evt: Event) {
   const { detail } = evt as RequestEvent<CustomerPortalSettings>;
   detail.handle(() => Promise.resolve(new Response(null, { status: 500 })));
 }
 
+/**
+ * @param evt
+ */
 function handleRequestWithSuccess(evt: Event) {
   const { detail } = evt as RequestEvent<CustomerPortalSettings>;
 
@@ -154,6 +179,9 @@ function handleRequestWithSuccess(evt: Event) {
   });
 }
 
+/**
+ * @param evt
+ */
 function handleRequestWithNotFound(evt: Event) {
   const { detail } = evt as RequestEvent<CustomerPortalSettings>;
 
@@ -178,11 +206,17 @@ function handleRequestWithNotFound(evt: Event) {
   });
 }
 
+/**
+ * @param evt
+ */
 function handleRequestWithInfiniteLoading(evt: Event) {
   const { detail } = evt as RequestEvent<CustomerPortalSettings>;
   detail.handle(() => new Promise(resolve => setTimeout(resolve, KINDA_INFINITE)));
 }
 
+/**
+ * @param evt
+ */
 function handleRequestWithUnauthorizedError(evt: Event) {
   const { detail } = evt as RequestEvent<CustomerPortalSettings>;
   detail.handle(() => Promise.resolve(new Response(null, { status: 401 })));

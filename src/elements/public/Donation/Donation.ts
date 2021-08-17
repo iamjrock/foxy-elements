@@ -1,14 +1,14 @@
-import { ScopedElementsMap } from '@open-wc/scoped-elements';
 import '@vaadin/vaadin-button';
 import '@vaadin/vaadin-text-field/vaadin-text-area';
-import { PropertyDeclarations } from 'lit-element';
-import { html, TemplateResult } from 'lit-html';
-import { Translatable } from '../../../mixins/translatable';
-import { parseDuration } from '../../../utils/parse-duration';
+import { Checkbox, Choice, Dropdown, ErrorScreen, Group, I18N } from '../../private';
 import { CheckboxChangeEvent, ChoiceChangeEvent, DropdownChangeEvent } from '../../private/events';
-import { Checkbox, Choice, Dropdown, ErrorScreen, Group, I18N } from '../../private/index';
+import { TemplateResult, html } from 'lit-html';
 import { DonationChangeEvent } from './DonationChangeEvent';
 import { DonationSubmitEvent } from './DonationSubmitEvent';
+import { PropertyDeclarations } from 'lit-element';
+import { ScopedElementsMap } from '@open-wc/scoped-elements';
+import { Translatable } from '../../../mixins/translatable';
+import { parseDuration } from '../../../utils/parse-duration';
 
 interface DonationEventsMap {
   change: typeof DonationChangeEvent;
@@ -32,12 +32,12 @@ export class Donation extends Translatable {
   /** @readonly */
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'vaadin-text-area': customElements.get('vaadin-text-area'),
-      'x-error-screen': ErrorScreen,
       'vaadin-button': customElements.get('vaadin-button'),
-      'x-dropdown': Dropdown,
+      'vaadin-text-area': customElements.get('vaadin-text-area'),
       'x-checkbox': Checkbox,
       'x-choice': Choice,
+      'x-dropdown': Dropdown,
+      'x-error-screen': ErrorScreen,
       'x-group': Group,
       'x-i18n': I18N,
     };
@@ -47,25 +47,25 @@ export class Donation extends Translatable {
   public static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
-      currency: { type: String },
-      custom: { type: Array },
       amount: { type: Number },
       amounts: { type: Array },
-      frequency: { type: String },
-      frequencies: { type: Array },
-      designation: { type: Array },
-      designations: { type: Array },
-      comment: { type: String },
       anonymity: { reflect: true, type: Boolean },
       anonymous: { reflect: true, type: Boolean },
-      image: { type: String },
-      store: { type: String },
-      name: { type: String },
-      code: { type: String },
-      url: { type: String },
       cart: { type: String },
-      target: { type: String },
+      code: { type: String },
+      comment: { type: String },
+      currency: { type: String },
+      custom: { type: Array },
+      designation: { type: Array },
+      designations: { type: Array },
       empty: { type: String },
+      frequencies: { type: Array },
+      frequency: { type: String },
+      image: { type: String },
+      name: { type: String },
+      store: { type: String },
+      target: { type: String },
+      url: { type: String },
     };
   }
 
@@ -210,7 +210,7 @@ export class Donation extends Translatable {
 
   /**
    * Optional product URL for this donation. Accepts a full URL to the product page, starting
-   * with `http://` or `https://`, or a relative path to the produt from the store's
+   * with `http://` or `https://`, or a relative path to the product from the store's
    * domain (as configured in the store settings). This property affects cart UI only.
    * See [Products](https://wiki.foxycart.com/v/2.0/products) wiki for more details.
    *

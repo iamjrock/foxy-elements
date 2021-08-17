@@ -1,14 +1,14 @@
 import { expect, fixture, oneEvent } from '@open-wc/testing';
 import { ButtonElement } from '@vaadin/vaadin-button';
 import { DatePickerElement } from '@vaadin/vaadin-date-picker';
-import { createModel } from '@xstate/test';
-import { createMachine } from 'xstate';
-import { parseDate } from '../../../../../utils/parse-date';
-import { getRefs } from '../../../../../utils/test-utils';
-import { ListChangeEvent } from '../../../../private/events';
-import { List } from '../../../../private/index';
 import { DisallowedDates } from './DisallowedDates';
 import { DisallowedDatesChangeEvent } from './DisallowedDatesChangeEvent';
+import { List } from '../../../../private';
+import { ListChangeEvent } from '../../../../private/events';
+import { createMachine } from 'xstate';
+import { createModel } from '@xstate/test';
+import { getRefs } from '../../../../../utils/test-utils';
+import { parseDate } from '../../../../../utils/parse-date';
 
 class TestDisallowedDates extends DisallowedDates {
   get whenReady() {
@@ -25,12 +25,18 @@ interface Refs {
   end: DatePickerElement;
 }
 
+/**
+ * @param {...any} tests
+ */
 function all<TElement extends HTMLElement>(...tests: ((element: TElement) => Promise<void>)[]) {
   return async (element: TElement) => {
     for (const test of tests) await test(element);
   };
 }
 
+/**
+ * @param ref
+ */
 function off(ref: keyof Refs) {
   return async (element: TestDisallowedDates) => {
     await element.updateComplete;
@@ -38,6 +44,9 @@ function off(ref: keyof Refs) {
   };
 }
 
+/**
+ * @param ref
+ */
 function on(ref: keyof Refs) {
   return async (element: TestDisallowedDates) => {
     await element.updateComplete;
@@ -45,6 +54,9 @@ function on(ref: keyof Refs) {
   };
 }
 
+/**
+ * @param element
+ */
 async function setsValue(element: TestDisallowedDates) {
   await element.updateComplete;
   expect(getRefs<Refs>(element).list).to.have.deep.property('value', element.value);

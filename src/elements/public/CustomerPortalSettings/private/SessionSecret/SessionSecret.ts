@@ -4,7 +4,7 @@ import '@polymer/iron-icons';
 import { TemplateResult, html } from 'lit-html';
 
 import { ButtonElement } from '@vaadin/vaadin-button';
-import { I18N } from '../../../../private/index';
+import { I18N } from '../../../../private';
 import { PasswordFieldElement } from '@vaadin/vaadin-text-field/vaadin-password-field';
 import { PropertyDeclarations } from 'lit-element';
 import { ScopedElementsMap } from '@open-wc/scoped-elements';
@@ -21,9 +21,9 @@ export class SessionSecretChangeEvent extends CustomEvent<{ value: string; inval
 export class SessionSecret extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'vaadin-password-field': PasswordFieldElement,
-      'vaadin-button': ButtonElement,
       'iron-icon': customElements.get('iron-icon'),
+      'vaadin-button': ButtonElement,
+      'vaadin-password-field': PasswordFieldElement,
       'x-i18n': I18N,
     };
   }

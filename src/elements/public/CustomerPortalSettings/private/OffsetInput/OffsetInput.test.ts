@@ -1,7 +1,7 @@
 import { expect, fixture } from '@open-wc/testing';
 import { createModel } from '@xstate/test';
 import { createMachine } from 'xstate';
-import { Choice } from '../../../../private/index';
+import { Choice } from '../../../../private';
 import { ChoiceChangeEvent } from '../../../../private/events';
 import { FrequencyInput } from '../FrequencyInput/FrequencyInput';
 import { OffsetInput } from './OffsetInput';
@@ -16,6 +16,9 @@ const samples = {
   },
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: OffsetInput) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector);
 
@@ -25,24 +28,36 @@ function getRefs(element: OffsetInput) {
   };
 }
 
+/**
+ * @param element
+ */
 function testEnabled(element: OffsetInput) {
   const refs = getRefs(element);
   expect(refs.choice.disabled).to.be.false;
   expect(refs.input?.disabled).to.be.oneOf([false, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testDisabled(element: OffsetInput) {
   const refs = getRefs(element);
   expect(refs.choice.disabled).to.be.true;
   expect(refs.input?.disabled).to.be.oneOf([true, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testNone(element: OffsetInput) {
   const { choice, input } = getRefs(element);
   expect(choice.value).to.equal('none');
   expect(input).to.be.null;
 }
 
+/**
+ * @param element
+ */
 async function testCustom(element: OffsetInput) {
   const { choice, input } = getRefs(element);
 

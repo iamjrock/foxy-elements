@@ -22,12 +22,12 @@ const Base = ScopedElementsMixin(
 export class UserForm extends Base<Data> {
   static get scopedElements(): ScopedElementsMap {
     return {
-      'foxy-internal-confirm-dialog': customElements.get('foxy-internal-confirm-dialog'),
-      'vaadin-text-field': customElements.get('vaadin-text-field'),
-      'vaadin-button': customElements.get('vaadin-button'),
-      'foxy-spinner': customElements.get('foxy-spinner'),
-      'x-checkbox': Checkbox,
       'foxy-i18n': customElements.get('foxy-i18n'),
+      'foxy-internal-confirm-dialog': customElements.get('foxy-internal-confirm-dialog'),
+      'foxy-spinner': customElements.get('foxy-spinner'),
+      'vaadin-button': customElements.get('vaadin-button'),
+      'vaadin-text-field': customElements.get('vaadin-text-field'),
+      'x-checkbox': Checkbox,
       'x-group': Group,
     };
   }
@@ -154,8 +154,8 @@ export class UserForm extends Base<Data> {
         <div
           data-testid="spinner"
           class=${classMap({
-            'transition duration-500 ease-in-out absolute inset-0 flex': true,
             'opacity-0 pointer-events-none': !isBusy && !isFail,
+            'transition duration-500 ease-in-out absolute inset-0 flex': true,
           })}
         >
           <foxy-spinner

@@ -1,28 +1,37 @@
-import { expect } from '@open-wc/testing';
-import { createModel } from '@xstate/test';
-import { createMachine } from 'xstate';
-import { Donation } from '../..';
 import { exec, getRefs } from '../../../../utils/test-utils';
-import { Refs } from './types';
 import { ChoiceChangeEvent } from '../../../private/events';
+import { Donation } from '../..';
+import { Refs } from './types';
+import { createMachine } from 'xstate';
+import { createModel } from '@xstate/test';
+import { expect } from '@open-wc/testing';
 
 const samples = {
-  designations: ['Designation one', 'Designation two', 'Designation three'],
   designation: 'Designation one',
+  designations: ['Designation one', 'Designation two', 'Designation three'],
 };
 
+/**
+ * @param element
+ */
 async function expectNoErrorScreen(element: Donation) {
   await element.updateComplete;
   const { error } = getRefs<Refs>(element);
   expect(error, 'error screen must not be rendered').to.be.undefined;
 }
 
+/**
+ * @param element
+ */
 async function expectNoDesignationPicker(element: Donation) {
   await element.updateComplete;
   const designation = getRefs<Refs>(element).designation;
   expect(designation, 'designations must not be rendered').to.be.undefined;
 }
 
+/**
+ * @param element
+ */
 async function expectNullDesignation(element: Donation) {
   await element.updateComplete;
   const field = getRefs<Refs>(element).form?.elements.namedItem('Designation');
@@ -30,6 +39,9 @@ async function expectNullDesignation(element: Donation) {
   expect(element.designation, 'designation must be null').to.be.null;
 }
 
+/**
+ * @param element
+ */
 async function expectStringDesignation(element: Donation) {
   await element.updateComplete;
 
@@ -41,6 +53,9 @@ async function expectStringDesignation(element: Donation) {
   expect(element.designation, 'designation must equal sample').to.equal(sample);
 }
 
+/**
+ * @param element
+ */
 async function expectDesignationPicker(element: Donation) {
   await element.updateComplete;
 
@@ -84,9 +99,9 @@ const machine = createMachine({
         null: {
           meta: { test: expectNullDesignation },
           on: {
-            UNSET_DESIGNATIONS: '#designations.off.null',
-            SET_DESIGNATION_STRING: '#designations.on.string.set',
             CHECK_DESIGNATION: '#designations.on.string.checked',
+            SET_DESIGNATION_STRING: '#designations.on.string.set',
+            UNSET_DESIGNATIONS: '#designations.off.null',
           },
         },
         string: {
@@ -97,8 +112,8 @@ const machine = createMachine({
             set: { meta: { test: () => true } },
           },
           on: {
-            UNSET_DESIGNATIONS: '#designations.off.string',
             SET_DESIGNATION_NULL: '#designations.on.null',
+            UNSET_DESIGNATIONS: '#designations.off.string',
           },
         },
       },
@@ -107,22 +122,22 @@ const machine = createMachine({
 });
 
 export const model = createModel<Donation>(machine).withEvents({
-  SET_DESIGNATIONS: {
-    exec: exec<Refs, Donation>(({ element }) => (element.designations = samples.designations)),
-  },
-  UNSET_DESIGNATIONS: {
-    exec: exec<Refs, Donation>(({ element }) => (element.designations = null)),
-  },
-  SET_DESIGNATION_STRING: {
-    exec: exec<Refs, Donation>(({ element }) => (element.designation = samples.designation)),
-  },
-  SET_DESIGNATION_NULL: {
-    exec: exec<Refs, Donation>(({ element }) => (element.designation = null)),
-  },
   CHECK_DESIGNATION: {
     exec: exec<Refs, Donation>(({ designation }) => {
       designation!.value = samples.designation;
       designation!.dispatchEvent(new ChoiceChangeEvent(designation!.value));
     }),
+  },
+  SET_DESIGNATIONS: {
+    exec: exec<Refs, Donation>(({ element }) => (element.designations = samples.designations)),
+  },
+  SET_DESIGNATION_NULL: {
+    exec: exec<Refs, Donation>(({ element }) => (element.designation = null)),
+  },
+  SET_DESIGNATION_STRING: {
+    exec: exec<Refs, Donation>(({ element }) => (element.designation = samples.designation)),
+  },
+  UNSET_DESIGNATIONS: {
+    exec: exec<Refs, Donation>(({ element }) => (element.designations = null)),
   },
 });

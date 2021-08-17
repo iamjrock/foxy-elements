@@ -9,6 +9,14 @@ type Params = {
   composeItem: (item: any) => any;
 };
 
+/**
+ * @param root0
+ * @param root0.url
+ * @param root0.rel
+ * @param root0.count
+ * @param root0.items
+ * @param root0.composeItem
+ */
 export function composeCollection({
   url,
   rel,
@@ -38,10 +46,10 @@ export function composeCollection({
   last.searchParams.set('offset', Math.max(count - limit, 0).toString());
 
   return halson({
-    total_items: count,
-    returned_items: items.length,
-    offset,
     limit,
+    offset,
+    returned_items: items.length,
+    total_items: count,
   })
     .addLink('first', first.toString())
     .addLink('self', url)

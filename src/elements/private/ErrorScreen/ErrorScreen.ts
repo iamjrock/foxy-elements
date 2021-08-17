@@ -1,9 +1,9 @@
-import { ScopedElementsMap } from '@open-wc/scoped-elements';
-import { ButtonElement } from '@vaadin/vaadin-button';
 import { CSSResultArray, PropertyDeclarations, css } from 'lit-element';
 import { TemplateResult, html } from 'lit-html';
-import { Translatable } from '../../../mixins/translatable';
+import { ButtonElement } from '@vaadin/vaadin-button';
 import { I18N } from '../I18N/I18N';
+import { ScopedElementsMap } from '@open-wc/scoped-elements';
+import { Translatable } from '../../../mixins/translatable';
 
 export type ErrorType = 'unknown' | 'setup_needed' | 'unauthorized';
 
@@ -24,8 +24,8 @@ export class ErrorScreenReloadEvent extends CustomEvent<void> {
 export class ErrorScreen extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'vaadin-button': ButtonElement,
       'iron-icon': customElements.get('iron-icon'),
+      'vaadin-button': ButtonElement,
       'x-i18n': I18N,
     };
   }
@@ -52,7 +52,7 @@ export class ErrorScreen extends Translatable {
   static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
-      reload: { type: Boolean, reflect: true },
+      reload: { reflect: true, type: Boolean },
       type: { type: String },
     };
   }

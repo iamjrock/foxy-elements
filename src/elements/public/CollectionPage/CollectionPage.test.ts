@@ -18,9 +18,9 @@ describe('CollectionPage', () => {
   generateTests<Data, CollectionPage<Data>, Refs>({
     parent: 'https://demo.foxycart.com/s/admin/customers/0/attributes',
     href: 'https://demo.foxycart.com/s/admin/customers/0/attributes',
-    tag: 'foxy-collection-page',
     isEmptyValid: true,
     maxTestsPerState: 5,
+    tag: 'foxy-collection-page',
     assertions: {
       idle: {
         async test({ refs, element }) {
@@ -62,6 +62,10 @@ describe('CollectionPage', () => {
   });
 });
 
+/**
+ * @param refs
+ * @param element
+ */
 async function testItemProperty(refs: Refs, element: CollectionPage<Data>) {
   const items = element.form?._embedded?.['fx:attributes'] ?? [];
   let itemElements = refs.items;

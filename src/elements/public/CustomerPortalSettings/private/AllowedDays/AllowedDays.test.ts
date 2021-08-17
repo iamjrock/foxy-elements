@@ -1,10 +1,10 @@
+import { Choice, MonthdayPicker, WeekdayPicker } from '../../../../private';
+import { MonthdayPickerChangeEvent, WeekdayPickerChangeEvent } from '../../../../private/events';
+import { expect, fixture } from '@open-wc/testing';
+import { AllowedDays } from './AllowedDays';
+import { AllowedDaysChangeEvent } from './AllowedDaysChangeEvent';
 import { createMachine } from 'xstate';
 import { createModel } from '@xstate/test';
-import { AllowedDays } from './AllowedDays';
-import { fixture, expect } from '@open-wc/testing';
-import { Choice, WeekdayPicker, MonthdayPicker } from '../../../../private/index';
-import { WeekdayPickerChangeEvent, MonthdayPickerChangeEvent } from '../../../../private/events';
-import { AllowedDaysChangeEvent } from './AllowedDaysChangeEvent';
 
 class TestAllowedDays extends AllowedDays {
   get whenReady() {
@@ -17,21 +17,27 @@ customElements.define('x-allowed-days', TestAllowedDays);
 const samples = {
   value: {
     all: undefined,
-    day: { type: 'day' as const, days: [0, 3, 6] },
-    month: { type: 'month' as const, days: [23, 16, 31] },
+    day: { days: [0, 3, 6], type: 'day' as const },
+    month: { days: [23, 16, 31], type: 'month' as const },
   },
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: TestAllowedDays) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector);
 
   return {
     choice: $('[data-testid=choice]') as Choice,
-    weekdayPicker: $('[data-testid=weekday-picker]') as WeekdayPicker | null,
     monthdayPicker: $('[data-testid=monthday-picker]') as MonthdayPicker | null,
+    weekdayPicker: $('[data-testid=weekday-picker]') as WeekdayPicker | null,
   };
 }
 
+/**
+ * @param element
+ */
 function testEnabled(element: TestAllowedDays) {
   const refs = getRefs(element);
 
@@ -40,6 +46,9 @@ function testEnabled(element: TestAllowedDays) {
   expect(refs.monthdayPicker?.disabled).to.be.oneOf([false, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testDisabled(element: TestAllowedDays) {
   const refs = getRefs(element);
 
@@ -48,6 +57,9 @@ function testDisabled(element: TestAllowedDays) {
   expect(refs.monthdayPicker?.disabled).to.be.oneOf([true, undefined]);
 }
 
+/**
+ * @param element
+ */
 function testAll(element: TestAllowedDays) {
   const refs = getRefs(element);
 
@@ -56,6 +68,9 @@ function testAll(element: TestAllowedDays) {
   expect(refs.monthdayPicker).to.be.null;
 }
 
+/**
+ * @param element
+ */
 async function testDay(element: TestAllowedDays) {
   const refs = getRefs(element);
 
@@ -75,6 +90,9 @@ async function testDay(element: TestAllowedDays) {
   }
 }
 
+/**
+ * @param element
+ */
 async function testMonth(element: TestAllowedDays) {
   const refs = getRefs(element);
 
@@ -97,29 +115,29 @@ async function testMonth(element: TestAllowedDays) {
 const machine = createMachine({
   type: 'parallel',
   states: {
-    interactivity: {
-      meta: { test: () => true },
-      initial: 'enabled',
-      states: {
-        enabled: { on: { DISABLE: 'disabled' }, meta: { test: testEnabled } },
-        disabled: { on: { ENABLE: 'enabled' }, meta: { test: testDisabled } },
-      },
-    },
     content: {
-      meta: { test: () => true },
       initial: 'all',
+      meta: { test: () => true },
       states: {
         all: { on: { SET_MONTH: 'month', SET_DAY: 'day' }, meta: { test: testAll } },
         day: { on: { SET_ALL: 'all', SET_MONTH: 'month' }, meta: { test: testDay } },
         month: { on: { SET_ALL: 'all', SET_DAY: 'day' }, meta: { test: testMonth } },
       },
     },
+    interactivity: {
+      initial: 'enabled',
+      meta: { test: () => true },
+      states: {
+        disabled: { on: { ENABLE: 'enabled' }, meta: { test: testDisabled } },
+        enabled: { on: { DISABLE: 'disabled' }, meta: { test: testEnabled } },
+      },
+    },
   },
 });
 
 const model = createModel<TestAllowedDays>(machine).withEvents({
-  ENABLE: { exec: element => void (element.disabled = false) },
   DISABLE: { exec: element => void (element.disabled = true) },
+  ENABLE: { exec: element => void (element.disabled = false) },
   SET_ALL: { exec: element => void (element.value = samples.value.all) },
   SET_DAY: { exec: element => void (element.value = samples.value.day) },
   SET_MONTH: { exec: element => void (element.value = samples.value.month) },

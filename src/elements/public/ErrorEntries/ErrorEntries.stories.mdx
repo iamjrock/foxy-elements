@@ -1,0 +1,69 @@
+import dedent from 'dedent';
+import { html } from 'lit-html';
+import { Subtitle, ArgsTable, Story, Canvas, Meta } from '@web/storybook-prebuilt/addon-docs/blocks.js';
+import './index.ts';
+
+<Meta title="Relations / ErrorEntries" />
+
+# Error entries page
+
+<Subtitle>Render a Collection of Error Entries</Subtitle>
+
+<Canvas
+  mdxSource={dedent`
+  <foxy-error-entries
+    href="https://demo.foxycart.com/s/admin/stores/0/error_entries"
+    class="block px-4 rounded-lg border"
+    >
+    </foxy-error-entries>
+    `}>
+  <Story name="ErrorEntries">
+    {() =>
+      html`
+    <foxy-error-entries
+    href="https://demo.foxycart.com/s/admin/stores/0/error_entries"
+    class="block px-4 rounded-lg border"
+    >
+    </foxy-error-entries>
+    `
+    }
+  </Story>
+</Canvas>
+
+## Reference
+
+<ArgsTable of="foxy-error-entries" />
+
+### hAPI
+
+This element supports the following resource: [error_entry](https://api.foxycart.com/rels/error_entries)
+
+### i18next
+
+This element supports the following namespace: `error-entries`.
+
+### Theming
+
+<Story name="State: busy" parameters={{ docs: { disable: true } }}>
+  {() =>
+    html`
+      <foxy-error-entries
+        href="https://demo.foxycart.com/s/admin/sleep"
+        class="container-narrow"
+      >
+      </foxy-error-entries>
+    `
+  }
+</Story>
+
+<Story name="State: fail" parameters={{ docs: { disable: true } }}>
+  {() =>
+    html`
+      <foxy-error-entries
+        href="https://demo.foxycart.com/s/admin/not-found"
+        class="container-narrow"
+      >
+      </foxy-error-entries>
+    `
+  }
+</Story>

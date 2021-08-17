@@ -1,11 +1,11 @@
 import { expect, fixture, oneEvent } from '@open-wc/testing';
-import { createModel } from '@xstate/test';
-import { createMachine } from 'xstate';
+import { FrequencyModification } from './FrequencyModification';
+import { FrequencyModificationChangeEvent } from './FrequencyModificationChangeEvent';
 import { FrequencyModificationRule } from '../FrequencyModificationRule/FrequencyModificationRule';
 import { FrequencyModificationRuleChangeEvent } from '../FrequencyModificationRule/FrequencyModificationRuleChangeEvent';
 import { FrequencyModificationRuleRemoveEvent } from '../FrequencyModificationRule/FrequencyModificationRuleRemoveEvent';
-import { FrequencyModification } from './FrequencyModification';
-import { FrequencyModificationChangeEvent } from './FrequencyModificationChangeEvent';
+import { createMachine } from 'xstate';
+import { createModel } from '@xstate/test';
 
 class TestFrequencyModification extends FrequencyModification {
   get whenReady() {
@@ -15,16 +15,22 @@ class TestFrequencyModification extends FrequencyModification {
 
 customElements.define('x-ruleset', TestFrequencyModification);
 
+/**
+ * @param element
+ */
 function getRefs(element: TestFrequencyModification) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector) as unknown;
   const $$ = (selector: string) => element.shadowRoot!.querySelectorAll(selector) as unknown;
 
   return {
     rules: Array.from($$('[data-testid=rule]') as FrequencyModificationRule[]),
-    add: $('[data-testid=add') as HTMLButtonElement,
+    add: $('[data-testid=add]') as HTMLButtonElement,
   };
 }
 
+/**
+ * @param disabled
+ */
 function testDisabled(disabled: boolean) {
   return async (element: TestFrequencyModification) => {
     await element.updateComplete;
@@ -37,6 +43,9 @@ function testDisabled(disabled: boolean) {
   };
 }
 
+/**
+ * @param element
+ */
 async function testValue(element: TestFrequencyModification) {
   await element.updateComplete;
   getRefs(element).rules.every((rule, index) => {

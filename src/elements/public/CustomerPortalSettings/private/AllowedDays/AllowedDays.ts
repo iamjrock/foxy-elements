@@ -1,16 +1,14 @@
-import { ScopedElementsMap } from '@open-wc/scoped-elements';
 import '@vaadin/vaadin-text-field/vaadin-text-field';
-import { html, PropertyDeclarations, TemplateResult } from 'lit-element';
-import { Translatable } from '../../../../../mixins/translatable';
-
+import { Choice, I18N, MonthdayPicker, WeekdayPicker } from '../../../../private';
 import {
   ChoiceChangeEvent,
   MonthdayPickerChangeEvent,
   WeekdayPickerChangeEvent,
 } from '../../../../private/events';
-
-import { Choice, I18N, MonthdayPicker, WeekdayPicker } from '../../../../private/index';
+import { PropertyDeclarations, TemplateResult, html } from 'lit-element';
 import { AllowedDaysChangeEvent } from './AllowedDaysChangeEvent';
+import { ScopedElementsMap } from '@open-wc/scoped-elements';
+import { Translatable } from '../../../../../mixins/translatable';
 
 export interface Rule {
   type: 'day' | 'month';
@@ -20,10 +18,10 @@ export interface Rule {
 export class AllowedDays extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'x-monthday-picker': MonthdayPicker,
-      'x-weekday-picker': WeekdayPicker,
       'x-choice': Choice,
       'x-i18n': I18N,
+      'x-monthday-picker': MonthdayPicker,
+      'x-weekday-picker': WeekdayPicker,
     };
   }
 
@@ -99,8 +97,8 @@ export class AllowedDays extends Translatable {
       evt.detail === this.__items[0]
         ? undefined
         : evt.detail === this.__items[1]
-        ? { type: 'month', days: [] }
-        : { type: 'day', days: [] };
+        ? { days: [], type: 'month' }
+        : { days: [], type: 'day' };
 
     this.__sendChange();
   }

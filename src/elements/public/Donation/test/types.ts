@@ -1,4 +1,4 @@
-import { ErrorScreen, Choice, Dropdown, Checkbox } from '../../../private/index';
+import { Checkbox, Choice, Dropdown, ErrorScreen } from '../../../private';
 
 export interface Refs {
   error?: ErrorScreen;

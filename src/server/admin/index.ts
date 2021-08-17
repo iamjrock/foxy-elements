@@ -1,5 +1,6 @@
 import { Collection, Table } from 'dexie';
 import { DemoDatabase, db, whenDbReady } from '../DemoDatabase';
+
 import { HALJSONResource } from '../../elements/public/NucleonElement/types';
 import { composeCartTemplate } from './composers/composeCartTemplate';
 import { composeCollection } from './composers/composeCollection';
@@ -9,15 +10,16 @@ import { composeCustomerAddress } from './composers/composeCustomerAddress';
 import { composeCustomerAttribute } from './composers/composeCustomerAttribute';
 import { composeDefaultPaymentMethod } from './composers/composeDefaultPaymentMethod';
 import { composeEmailTemplate } from './composers/composeEmailTemplate';
+import { composeTemplateCache } from './composers/composeTemplateCache';
 import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
+import { composeTax } from './composers/composeTax';
 import { composeTransaction } from './composers/composeTransaction';
 import { composeTemplateConfig } from './composers/composeTemplateConfig';
 import { composeUser } from './composers/composeUser';
 import { getPagination } from '../getPagination';
 import { router } from '../router';
-import { composeTemplateCache } from './composers/composeTemplateCache';
 
 const endpoint = 'https://demo.foxycart.com/s/admin';
 export { endpoint, router, db, whenDbReady, DemoDatabase };
@@ -285,6 +287,20 @@ router.patch('/s/admin/error_entries/:id', async ({ params, request }) => {
   return new Response(JSON.stringify(body));
 });
 
+router.get('/s/admin/error_entries/:id', async ({ params }) => {
+  await whenDbReady;
+  const errorEntry = await db.errorEntries.get(parseInt(params.id));
+  const body = composeErrorEntry(errorEntry);
+  return new Response(JSON.stringify(body));
+});
+
+router.patch('/s/admin/error_entries/:id', async ({ params, request }) => {
+  await whenDbReady;
+  const id = parseInt(params.id);
+  await db.errorEntries.update(id, await request.json());
+  const body = composeErrorEntry(await db.errorEntries.get(id));
+  return new Response(JSON.stringify(body));
+});
 // customer_attributes
 
 router.get('/s/admin/customers/:id/attributes', async ({ params, request }) => {
@@ -567,9 +583,21 @@ router.delete('/s/admin/users/:id', async ({ params, request }) => {
   return user;
 });
 
+// taxes
+
+router.get('/s/admin/stores/:storeId/taxes/:id', async ({ params }) => {
+  return respondItemById(db.taxes, parseInt(params.id), composeTax);
+});
+
+router.get('/s/admin/stores/:id/taxes', async ({ request }) => {
+  return respondItems(db.taxes, composeTax, request.url, 'fx:taxes');
+});
+
 router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
   return respondItems(db.emailTemplates, composeCartTemplate, request.url, 'fx:email_templates');
 });
+
+// Templates
 
 router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);

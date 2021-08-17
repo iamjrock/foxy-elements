@@ -10,7 +10,7 @@ export class FetchEvent extends Event {
 
   private __resolve: (response: Response) => void;
 
-  private __reject: (err: unknown) => void;
+  private readonly __reject: (err: unknown) => void;
 
   constructor(type: 'fetch', init: FetchEventInit) {
     super(type, init);
@@ -21,6 +21,8 @@ export class FetchEvent extends Event {
 
   /**
    * Prevent the `EventTarget`'s default fetch handling, and provide a promise for a response yourself.
+   *
+   * @param whenResponseReady
    * @example event.respondWith(Promise.resolve(new Response(null, { status: 500 })))
    */
   respondWith(whenResponseReady: Promise<Response>): void {

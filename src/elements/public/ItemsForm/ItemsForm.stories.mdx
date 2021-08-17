@@ -1,4 +1,4 @@
-import { Story, Canvas, Meta, Props, ArgsTable } from '@web/storybook-prebuilt/addon-docs/blocks.js';
+import { Story, Canvas, Meta, ArgsTable } from '@web/storybook-prebuilt/addon-docs/blocks.js';
 import dedent from 'dedent';
 import { html } from 'lit-html';
 import './index';
@@ -33,9 +33,9 @@ export const getTemplate = (args, children = '') => html`
 
 # Items Form
 
-Items Form provides a straighforward way to create an e-commerce form.
+Items Form provides a straightforward way to create an e-commerce form.
 
-You feed your form with the items and it will take care of the rest for you.
+You feed your form with the items, and it will take care of the rest for you.
 
 Feel free to use your favorite template engine or provide items in a JSON format.
 
@@ -449,7 +449,7 @@ Setting the price of the parent item to zero effectively creates a bundled item.
 
 ### Bonus items
 
-Setting the price of the children to zero you effectivelly create a bonus item, where upon purchasing an item your client gets another for free. Here we use the `attributes` approach.
+Setting the price of the children to zero you effectively create a bonus item, whereupon purchasing an item your client gets another for free. Here we use the `attributes` approach.
 
 <Canvas
   mdxSource={dedent`
@@ -614,9 +614,9 @@ You may add your custom inputs to be submitted with the form by adding child ele
         <label>How was your experience today?</label>
         <textarea id="feedback" name="feedback" ></textarea>
         <label>Rate us</label>
-        <input name="rate-us" type="number" min="1" max="5" placeholder="1 - 5">
+        <input name="rate-us" type="number" min="1" max="5" placeholder="1 - 5"></input>
         <div >
-        <label>Where did you hear from us? <input type="radio" name="hear" value="streets">Streets</input> <input type="radio" name="hear" value="internet">Internet</input>
+        <label>Where did you hear from us? <input type="radio" name="hear" value="streets">Streets</input> <input type="radio" name="hear" value="internet">Internet</input></label>
         </div>
         <label>Would you like to subscribe to our newsletter?</label>
         <select name="newsletter">
@@ -644,8 +644,9 @@ You may add your custom inputs to be submitted with the form by adding child ele
             <textarea id="feedback" name="feedback" style="width: 100%; border: solid thin silver "></textarea>
             <label style="width: 100%">Rate us</label>
             <input name="rate-us" type="number" min="1" max="5" placeholder="1 - 5" style="width: 100%; border: solid thin silver ">
-            <div >
-              <label>Where did you hear from us? <input type="radio" name="hear" value="streets">Streets</input> <input type="radio" name="hear" value="internet">Internet</input>
+            </input>
+            <div>
+              <label>Where did you hear from us? <input type="radio" name="hear" value="streets">Streets</input> <input type="radio" name="hear" value="internet">Internet</input></label>
             </div>
             <label>Would you like to subscribe to our newsletter?</label>
             <select name="newsletter">
@@ -658,8 +659,6 @@ You may add your custom inputs to be submitted with the form by adding child ele
     }
   </Story>
 </Canvas>
-
-
 
 ## Changing items list
 
@@ -702,13 +701,13 @@ myForm.addItems([
 
 ### By removing an array of items
 
-Custumers may remove items from the form using the quantity button or the remove checkbox. There may be circumstances, however, where the application itself must remove an item from the form. You may simply remove the item directly:
+Customers may remove items from the form using the quantity button or the remove checkbox. There may be circumstances, however, where the application itself must remove an item from the form. You may simply remove the item directly:
 
 ```javascript
 myForm.querySelector('[name="Green Tea of the Month"]').remove();
 ```
 
-You can also achieve this by providing a new items array or you may choose to remove an item. You will need to use the item id called `pid`, like so: Consider the following code:
+You can also achieve this by providing a new items array or you may choose to remove an item. You will need to use the item id called `pid`, like so:
 
 ```javascript
 var itemToRemove = myForm.querySelector('SomePropertyUniqueToItemToRemove');

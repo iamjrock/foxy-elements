@@ -29,7 +29,7 @@ registerStyles(
 
 /**
  * According to Vaadin docs: if you do not want to select any item by default, you can set
- * the vaadin-select value to an inexistent value in the items list. This function
+ * the vaadin-select value to a nonexistent value in the items list. This function
  * generates such value.
  */
 function getUnexistentValue() {
@@ -41,7 +41,7 @@ export class Dropdown extends LitElement {
     return {
       ...super.properties,
       disabled: { type: Boolean },
-      getText: { type: Object, attribute: false },
+      getText: { attribute: false, type: Object },
       items: { type: Array },
       label: { type: String },
       value: { type: String },
@@ -66,7 +66,7 @@ export class Dropdown extends LitElement {
 
   private __renderedItems: Record<string, Element> = {};
 
-  private __list: HTMLElement;
+  private readonly __list: HTMLElement;
 
   constructor() {
     super();

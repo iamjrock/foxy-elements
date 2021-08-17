@@ -1,13 +1,13 @@
+import { Switch, SwitchChangeEvent } from '../../../../private';
 import { expect, fixture, oneEvent } from '@open-wc/testing';
-import { createModel } from '@xstate/test';
-import { createMachine } from 'xstate';
-import { Switch, SwitchChangeEvent } from '../../../../private/Switch/Switch';
+import { NextDateModification } from './NextDateModification';
+import { NextDateModificationChangeEvent } from './NextDateModificationChangeEvent';
 import { NextDateModificationRule } from '../NextDateModificationRule/NextDateModificationRule';
 import { NextDateModificationRuleChangeEvent } from '../NextDateModificationRule/NextDateModificationRuleChangeEvent';
 import { NextDateModificationRuleRemoveEvent } from '../NextDateModificationRule/NextDateModificationRuleRemoveEvent';
-import { NextDateModification } from './NextDateModification';
-import { NextDateModificationChangeEvent } from './NextDateModificationChangeEvent';
 import { Rule } from './Rule';
+import { createMachine } from 'xstate';
+import { createModel } from '@xstate/test';
 
 class TestNextDateModification extends NextDateModification {
   get whenReady() {
@@ -18,22 +18,28 @@ class TestNextDateModification extends NextDateModification {
 customElements.define('x-next-date-modification', TestNextDateModification);
 
 const samples = {
-  value: [{ jsonataQuery: '*' }, { jsonataQuery: '*', min: '2m' }],
   basicValue: [{ jsonataQuery: '*' }],
   modifiedRule: { jsonataQuery: '$contains(frequency, "w")', max: '1y' },
+  value: [{ jsonataQuery: '*' }, { jsonataQuery: '*', min: '2m' }],
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: TestNextDateModification) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector) as unknown;
   const $$ = (selector: string) => element.shadowRoot!.querySelectorAll(selector) as unknown;
 
   return {
-    toggle: $('[data-testid=toggle]') as Switch,
+    add: $('[data-testid=add]') as HTMLButtonElement,
     rules: Array.from($$('[data-testid=rule]') as NextDateModificationRule[]),
-    add: $('[data-testid=add') as HTMLButtonElement,
+    toggle: $('[data-testid=toggle]') as Switch,
   };
 }
 
+/**
+ * @param disabled
+ */
 function testInteractivity(disabled: boolean) {
   return async (element: TestNextDateModification) => {
     await element.updateComplete;
@@ -46,6 +52,9 @@ function testInteractivity(disabled: boolean) {
   };
 }
 
+/**
+ * @param value
+ */
 function testContent(value: Rule[] | boolean) {
   return async (element: TestNextDateModification) => {
     await element.updateComplete;

@@ -4,7 +4,7 @@ import { State, StateMachine, interpret } from 'xstate';
 
 import { ConfigurableMixin } from '../../../mixins/configurable';
 import { FetchEvent } from '../NucleonElement/FetchEvent';
-import { NucleonElement } from '../NucleonElement/NucleonElement';
+import { NucleonElement } from '../NucleonElement';
 import { Rumour } from '@foxy.io/sdk/core';
 import { machine } from './machine';
 import { repeat } from 'lit-html/directives/repeat';
@@ -181,12 +181,13 @@ export class CollectionPages<TPage extends Page> extends ConfigurableMixin(LitEl
    * - `busy` when loading a page;
    * - `fail` when page load fails;
    * - `idle` when not loading anything for one of the reasons below:
-   *   - `paused` if waiting for user to scroll further;
-   *     - `manual` when next page load will be triggered by clicking a button;
-   *     - `auto` when next page load will be triggered by scrolling to the observer target;
-   *   - `empty` if collection is empty;
-   *   - `end` if there are no more items in a collection.
+   * - `paused` if waiting for user to scroll further;
+   * - `manual` when next page load will be triggered by clicking a button;
+   * - `auto` when next page load will be triggered by scrolling to the observer target;
+   * - `empty` if collection is empty;
+   * - `end` if there are no more items in a collection.
    *
+   * @param stateValue
    * @example element.in({ idle: 'empty' })
    */
   in(stateValue: State<Context, Event>['value']): boolean {
@@ -260,7 +261,10 @@ export class CollectionPages<TPage extends Page> extends ConfigurableMixin(LitEl
     `;
   }
 
-  /** @readonly */
+  /**
+   * @param changes
+   * @readonly
+   */
   updated(changes: Map<keyof this, unknown>): void {
     super.updated(changes);
     this.dispatchEvent(new NucleonElement.UpdateEvent());

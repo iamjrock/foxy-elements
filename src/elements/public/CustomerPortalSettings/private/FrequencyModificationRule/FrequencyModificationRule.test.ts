@@ -1,13 +1,13 @@
 import { expect, fixture, oneEvent } from '@open-wc/testing';
-import { createModel } from '@xstate/test';
-import { createMachine } from 'xstate';
 import { FrequencyList } from '../FrequencyList/FrequencyList';
 import { FrequencyListChangeEvent } from '../FrequencyList/FrequencyListChangeEvent';
-import { JSONataInput } from '../JSONataInput/JSONataInput';
-import { JSONataInputChangeEvent } from '../JSONataInput/JSONataInputChangeEvent';
 import { FrequencyModificationRule } from './FrequencyModificationRule';
 import { FrequencyModificationRuleRemoveEvent } from './FrequencyModificationRuleRemoveEvent';
+import { JSONataInput } from '../JSONataInput/JSONataInput';
+import { JSONataInputChangeEvent } from '../JSONataInput/JSONataInputChangeEvent';
 import { Rule } from './types';
+import { createMachine } from 'xstate';
+import { createModel } from '@xstate/test';
 
 class TestFrequencyModificationRule extends FrequencyModificationRule {
   get whenReady() {
@@ -18,21 +18,27 @@ class TestFrequencyModificationRule extends FrequencyModificationRule {
 customElements.define('x-rule', TestFrequencyModificationRule);
 
 const samples = {
-  default: { jsonataQuery: '*', values: [] },
   custom: { jsonataQuery: '$contains(frequency, "w")', values: ['.5m', '1y'] },
+  default: { jsonataQuery: '*', values: [] },
 };
 
+/**
+ * @param element
+ */
 function getRefs(element: TestFrequencyModificationRule) {
   const $ = (selector: string) => element.shadowRoot!.querySelector(selector);
 
   return {
     remove: $('[data-testid=remove]') as HTMLButtonElement,
     details: $('[data-testid=details]') as HTMLDetailsElement,
-    jsonata: $('[data-testid=jsonata') as JSONataInput,
-    frequency: $('[data-testid=frequency') as FrequencyList,
+    jsonata: $('[data-testid=jsonata]') as JSONataInput,
+    frequency: $('[data-testid=frequency]') as FrequencyList,
   };
 }
 
+/**
+ * @param value
+ */
 function testDisabled(value: boolean) {
   return async (element: TestFrequencyModificationRule) => {
     await element.updateComplete;
@@ -51,6 +57,9 @@ function testDisabled(value: boolean) {
   };
 }
 
+/**
+ * @param value
+ */
 function testOpen(value: boolean) {
   return async (element: TestFrequencyModificationRule) => {
     await element.updateComplete;
@@ -61,6 +70,9 @@ function testOpen(value: boolean) {
   };
 }
 
+/**
+ * @param value
+ */
 function testContent(value: Rule) {
   return async (element: TestFrequencyModificationRule) => {
     await element.updateComplete;

@@ -24,8 +24,8 @@ import { cdn } from '../env';
 export abstract class Translatable extends ScopedElementsMixin(LitElement) {
   static get properties(): PropertyDeclarations {
     return {
-      lang: { type: String, noAccessor: true },
-      ns: { type: String, noAccessor: true },
+      lang: { noAccessor: true, type: String },
+      ns: { noAccessor: true, type: String },
     };
   }
 
@@ -34,7 +34,9 @@ export abstract class Translatable extends ScopedElementsMixin(LitElement) {
   }
 
   /**
-   * i18next formatter that converts given value to lowecase.
+   * i18next formatter that converts given value to lowercase.
+   *
+   * @param value
    * @see https://www.i18next.com/translation-function/formatting
    */
   private static __fLowercase: FormatFunction = (value): string => {
@@ -45,6 +47,8 @@ export abstract class Translatable extends ScopedElementsMixin(LitElement) {
    * i18next formatter that presents an array of serializable items
    * as `[0], [1], [...] and [length - 1]`. For example, given an array like
    * the following: `['a', 'b', 'c']`, it will output `'a, b and c'`.
+   *
+   * @param value
    * @see https://www.i18next.com/translation-function/formatting
    */
   private static __fList: FormatFunction = (value): string => {
@@ -59,6 +63,8 @@ export abstract class Translatable extends ScopedElementsMixin(LitElement) {
 
   /**
    * Chooses the right i18next formatter for the given template.
+   *
+   * @param {...any} args
    * @see https://www.i18next.com/translation-function/formatting
    */
   private static __f: FormatFunction = (...args): string => {
@@ -141,19 +147,17 @@ export abstract class Translatable extends ScopedElementsMixin(LitElement) {
     this.__i18n.use(HttpApi);
 
     this.__whenI18NReady = this.__i18n.init({
-      ns: ['global'],
-      supportedLngs: ['nl', 'en', 'es', 'sv', 'fi', 'fr', 'de', 'zh', 'no', 'it'],
-      interpolation: { format: Translatable.__f },
-      fallbackLng: 'en',
-      fallbackNS: 'global',
+      backend: { loadPath: `${cdn}/translations/{{ns}}/{{lng}}.json` },
       defaultNS: 'global',
       detection: {
-        order: ['querystring', 'navigator', 'htmlTag', 'path', 'subdomain'],
         caches: [],
+        order: ['querystring', 'navigator', 'htmlTag', 'path', 'subdomain'],
       },
-      backend: {
-        loadPath: `${cdn}/translations/{{ns}}/{{lng}}.json`,
-      },
+      fallbackLng: 'en',
+      fallbackNS: 'global',
+      interpolation: { format: Translatable.__f },
+      ns: ['global'],
+      supportedLngs: ['nl', 'en', 'es', 'sv', 'fi', 'fr', 'de', 'zh', 'no', 'it'],
     });
 
     this.__whenI18NReady.then(() => (this.__isI18NReady = true));
@@ -188,12 +192,14 @@ export declare class TranslatableMixinHost {
 
   /**
    * Namespace used by this element.
+   *
    * @since 1.4.0
    */
   ns: string;
 
   /**
    * Translation function from i18next fixed to the current language and element namespace.
+   *
    * @since 1.4.0
    */
   get t(): Translator;
@@ -245,7 +251,10 @@ export const TranslatableMixin = <T extends Base>(
       this.__untrackTranslations = I18nElement?.onTranslationChange(() => this.requestUpdate());
     }
 
-    /** @readonly */
+    /**
+     * @param changedProperties
+     * @readonly
+     */
     updated(changedProperties: Map<keyof I18n, unknown>): void {
       super.updated(changedProperties);
 

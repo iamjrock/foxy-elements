@@ -1,8 +1,8 @@
-import { html, TemplateResult } from 'lit-element';
-import { concatTruthy } from '../../../utils/concat-truthy';
-import { translateWeekday } from '../../../utils/translate-weekday';
+import { TemplateResult, html } from 'lit-element';
 import { MonthdayPicker } from '../MonthdayPicker/MonthdayPicker';
 import { WeekdayPickerChangeEvent } from './WeekdayPickerChangeEvent';
+import { concatTruthy } from '../../../utils/concat-truthy';
+import { translateWeekday } from '../../../utils/translate-weekday';
 
 export class WeekdayPicker extends MonthdayPicker {
   protected static readonly _allDays = new Array(7).fill(0).map((_, i) => i);

@@ -1,8 +1,12 @@
 import { parseDate } from './parse-date';
 
+/**
+ * @param value
+ * @param lang
+ */
 export function translateDate(value: string, lang: string): string {
   const thisYear = new Date().getFullYear();
-  const opts = { month: 'long', day: 'numeric' };
+  const opts = { day: 'numeric', month: 'long' };
 
   return value
     .split('..')

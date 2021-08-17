@@ -2,7 +2,7 @@ import '@polymer/iron-icon';
 import '@polymer/iron-icons';
 import '@vaadin/vaadin-text-field/vaadin-text-field';
 
-import { Choice, I18N } from '../../../../private/index';
+import { Choice, I18N } from '../../../../private';
 import { PropertyDeclarations, TemplateResult, html } from 'lit-element';
 
 import { ChoiceChangeEvent } from '../../../../private/events';
@@ -17,8 +17,8 @@ const DEBOUNCE_WAIT = 275;
 export class JSONataInput extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'vaadin-text-field': customElements.get('vaadin-text-field'),
       'iron-icon': customElements.get('iron-icon'),
+      'vaadin-text-field': customElements.get('vaadin-text-field'),
       'x-choice': Choice,
       'x-i18n': I18N,
     };

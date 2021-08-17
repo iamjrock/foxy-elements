@@ -1,38 +1,38 @@
-import { ScopedElementsMap } from '@open-wc/scoped-elements';
 import '@polymer/iron-icon';
 import '@vaadin/vaadin-lumo-styles/icons';
+import { Group, I18N } from '../../../../private';
+import { TemplateResult, html } from 'lit-html';
+import { FrequencyList } from '../FrequencyList/FrequencyList';
+import { FrequencyListChangeEvent } from '../FrequencyList/FrequencyListChangeEvent';
+import { FrequencyModificationRuleChangeEvent } from './FrequencyModificationRuleChangeEvent';
+import { FrequencyModificationRuleRemoveEvent } from './FrequencyModificationRuleRemoveEvent';
+import { JSONataInput } from '../JSONataInput/JSONataInput';
+import { JSONataInputChangeEvent } from '../JSONataInput/JSONataInputChangeEvent';
 import { PropertyDeclarations } from 'lit-element';
-import { html, TemplateResult } from 'lit-html';
+import { Rule } from './types';
+import { ScopedElementsMap } from '@open-wc/scoped-elements';
 import { Translatable } from '../../../../../mixins/translatable';
 import { classMap } from '../../../../../utils/class-map';
 import { parseDuration } from '../../../../../utils/parse-duration';
 import { prevent } from '../../../../../utils/prevent';
-import { Group, I18N } from '../../../../private/index';
-import { FrequencyList } from '../FrequencyList/FrequencyList';
-import { FrequencyListChangeEvent } from '../FrequencyList/FrequencyListChangeEvent';
-import { JSONataInput } from '../JSONataInput/JSONataInput';
-import { JSONataInputChangeEvent } from '../JSONataInput/JSONataInputChangeEvent';
-import { FrequencyModificationRuleChangeEvent } from './FrequencyModificationRuleChangeEvent';
-import { FrequencyModificationRuleRemoveEvent } from './FrequencyModificationRuleRemoveEvent';
-import { Rule } from './types';
 
 export class FrequencyModificationRule extends Translatable {
   public static get scopedElements(): ScopedElementsMap {
     return {
-      'x-frequency-list': FrequencyList,
-      'x-jsonata-input': JSONataInput,
       'iron-icon': customElements.get('iron-icon'),
+      'x-frequency-list': FrequencyList,
       'x-group': Group,
       'x-i18n': I18N,
+      'x-jsonata-input': JSONataInput,
     };
   }
 
   public static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
+      disabled: { attribute: false },
       open: { attribute: false },
       value: { attribute: false },
-      disabled: { attribute: false },
     };
   }
 
@@ -132,8 +132,8 @@ export class FrequencyModificationRule extends Translatable {
     if (frequency === '.5m') return this._t('frequency_0_5m');
     const { count, units } = parseDuration(frequency);
     return this._t('frequency', {
-      units: this._t(units, { count }),
       count,
+      units: this._t(units, { count }),
     });
   }
 
