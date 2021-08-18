@@ -55,8 +55,10 @@
   "location_filtering": {
     "title": "Location filtering",
     "independently": "Configure shipping and billing filters indepedently",
-    "whitelist": "Allow the selected locations",
-    "blacklist": "Disallow the selected locations"
+    "whitelist": "Allow locations",
+    "blacklist": "Disallow locations",
+    "shipping": "Shipping",
+    "billing": "Billing"
   },
   "product": "Product",
   "required": "Required",
