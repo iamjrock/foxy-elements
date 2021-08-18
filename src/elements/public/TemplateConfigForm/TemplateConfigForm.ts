@@ -398,23 +398,7 @@ export class TemplateConfigForm extends Base<Item> {
         </div>
       </x-group>
       ${this.__renderCartConfigHeaderFooter()} ${this.__renderCartConfigFoxyComplete()}
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="debug-usage"
-            .items=${['none', 'shipping', 'billing', 'both', 'independent']}
-          ></vaadin-combo-box>
-          ${['shipping', 'billing'].map(
-            e => html`
-              <vaadin-combo-box
-                label="${e}_filter_type"
-                .items=${['blacklist', 'whitelist']}
-              ></vaadin-combo-box>
-              <vaadin-text-field label="${e}_filter_values"> </vaadin-text-field>
-            `
-          )}
-        </div>
-      </x-group>
+      ${this.__renderCartFilter()}
       <x-group frame>
         <div class="p-m">
           <vaadin-combo-box
@@ -423,6 +407,32 @@ export class TemplateConfigForm extends Base<Item> {
           ></vaadin-combo-box>
         </div>
       </x-group>`;
+  }
+
+  private __renderCartFilter() {
+    return html`
+      <x-group class="mt-m" frame>
+        <foxy-i18n
+          key="location_filtering.title"
+          slot="header"
+          ns=${this.ns}
+          lang=${this.lang}
+        ></foxy-i18n>
+        <div class="p-s">
+          <x-checkbox class="py-s" @change=${this.__handleLocationFiltering.bind(this)}>
+            <foxy-i18n ns=${this.ns} key="location_filtering.independently"></foxy-i18n>
+          </x-checkbox>
+          ${this.__getJsonAttribute(['location_filtering', 'usage']) != 'none'
+            ? html`
+                <div class="grid grid-cols-2 gap-xs">
+                  ${this.__renderCartFilterLocationList('shipping')}
+                  ${this.__renderCartFilterLocationList('billing')}
+                </div>
+              `
+            : this.__renderCartFilterLocationList('both')}
+        </div>
+      </x-group>
+    `;
   }
 
   private __renderCartConfigHeaderFooter() {
