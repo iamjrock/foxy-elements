@@ -51,6 +51,7 @@ export class TemplateConfigForm extends Base<Item> {
 
   static get scopedElements(): ScopedElementsMap {
     return {
+      'foxy-country-widget': CountryWidget,
       'foxy-i18n': customElements.get('foxy-i18n'),
       'foxy-internal-confirm-dialog': customElements.get('foxy-internal-confirm-dialog'),
       'foxy-internal-sandbox': customElements.get('foxy-internal-sandbox'),
@@ -136,6 +137,10 @@ export class TemplateConfigForm extends Base<Item> {
     if (el) {
       this.__hiddenOptionsElement = el;
     }
+  }
+
+  private __countriesURL() {
+    return new URL(this.href).origin + TemplateConfigForm.countriesHelperPath;
   }
 
   private __renderTabs(tabs: Array<Tab>): TemplateResult {
@@ -435,6 +440,54 @@ export class TemplateConfigForm extends Base<Item> {
     `;
   }
 
+  private __renderCartFilterLocationList(which: 'billing' | 'shipping' | 'both') {
+    const filterType = `location_filtering.${which}`;
+    return html`
+      <x-group>
+        ${which != 'both'
+          ? html`<foxy-i18n
+              slot="header"
+              key="${filterType}"
+              ns=${this.ns}
+              lang=${this.lang}
+            ></foxy-i18n>`
+          : ''}
+        <vaadin-list-box>
+          <vaadin-item name="filtertype">
+            <foxy-i18n
+              key="location_filtering.whitelist"
+              ns=${this.ns}
+              lang=${this.lang}
+            ></foxy-i18n>
+          </vaadin-item>
+          <vaadin-item name="filtertype">
+            <foxy-i18n
+              key="location_filtering.blacklist"
+              ns=${this.ns}
+              lang=${this.lang}
+            ></foxy-i18n>
+          </vaadin-item>
+        </vaadin-list-box>
+        <foxy-country-widget href="${this.__countriesURL()}"> </foxy-country-widget>
+      </x-group>
+    `;
+  }
+
+  private __handleLocationFiltering(ev: CustomEvent) {
+    console.log(ev);
+    if ((ev.target as HTMLInputElement).getAttribute('data-tag-name') === 'x-checkbox') {
+      console.log('yes');
+      if (ev.detail) {
+        this.__setJsonAttribute(['location_filtering', 'usage'], 'independent');
+      } else {
+        this.__setJsonAttribute(['location_filtering', 'usage'], 'none');
+      }
+    } else {
+      console.log('no');
+      console.log((ev.target as HTMLInputElement).getAttribute('data-tag-name'));
+    }
+  }
+
   private __renderCartConfigHeaderFooter() {
     return html` <x-group frame class="mt-m">
       <foxy-i18n
@@ -453,23 +506,40 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderCartConfigFoxyComplete() {
     return html`
-      <div class="p-m">
-        <vaadin-combo-box
-          label=${this.t('foxycomplete.usage')}
-          value=${this.__getJsonAttribute('foxycomplete-usage') ?? ''}
-          .items=${['none', 'required']}
-        ></vaadin-combo-box>
-        <div class="grid grid-cols-2 gap-m">
-          <x-checkbox>
-            <foxy-i18n ns=${this.ns} key="foxycomplete.show_combobox"></foxy-i18n>
-          </x-checkbox>
-          <x-checkbox>
-            <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
-          </x-checkbox>
-          ${this.__renderTextField(['foxycomplete', 'combobox_open'])}
-          ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
+      <x-group class="mt-m" frame>
+        <foxy-i18n
+          slot="header"
+          key="foxycomplete.title"
+          ns="${this.ns}"
+          lang="${this.lang}"
+        ></foxy-i18n>
+        <div class="p-m">
+          <div class="grid grid-cols-4 gap-s">
+            <div class="py-m col-span-3">
+              <x-checkbox
+                class="py-s"
+                @change=${(ev: CustomEvent) =>
+                  this.__setJsonAttribute(
+                    ['foxycomplete', 'usage'],
+                    ev.detail ? 'required' : 'none'
+                  )}
+              >
+                <foxy-i18n ns=${this.ns} key="foxycomplete.usage"></foxy-i18n>
+              </x-checkbox>
+              <x-checkbox class="py-s">
+                <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
+              </x-checkbox>
+              <x-checkbox class="py-s">
+                <foxy-i18n ns=${this.ns} key="foxycomplete.show_combobox"></foxy-i18n>
+              </x-checkbox>
+            </div>
+            <div>
+              ${this.__renderTextField(['foxycomplete', 'combobox_open'])}
+              ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
+            </div>
+          </div>
         </div>
-      </div>
+      </x-group>
     `;
   }
 
