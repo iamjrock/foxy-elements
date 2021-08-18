@@ -24,6 +24,8 @@ const Base = ScopedElementsMixin(
 );
 
 export class TemplateConfigForm extends Base<Item> {
+  static countriesHelperPath = '/property_helpers/countries?include_regions';
+
   static get styles(): CSSResultArray {
     return [
       ...super.styles,
@@ -55,15 +57,15 @@ export class TemplateConfigForm extends Base<Item> {
       'foxy-spinner': customElements.get('foxy-spinner'),
       'iron-icon': customElements.get('iron-icon'),
       'vaadin-button': customElements.get('vaadin-button'),
-      'vaadin-radio-button': RadioButtonElement,
-      'vaadin-radio-group': customElements.get('vaadin-radio-group'),
       'vaadin-text-area': customElements.get('vaadin-text-area'),
       'vaadin-text-field': customElements.get('vaadin-text-field'),
       'vaadin-combo-box': customElements.get('vaadin-combo-box'),
       'vaadin-details': DetailsElement,
+      'vaadin-list-box': ListBoxElement,
+      'vaadin-item': ItemElement,
       'x-checkbox': Checkbox,
-      'x-group': Group,
       'x-choice': Choice,
+      'x-group': Group,
       'x-tabs': Tabs,
     };
   }
@@ -189,14 +191,14 @@ export class TemplateConfigForm extends Base<Item> {
             value=${this.__getJsonAttribute('tos_checkbox_settings-usage') ?? ''}
             .items=${['none', 'required', 'optional']}
           ></vaadin-combo-box>
-          <vaadin-radio-group label="tos_checkbox_settings-initial_state" theme="horizontal">
-            <vaadin-radio-button value="checked">
+          <vaadin-list-box label="tos_checkbox_settings-initial_state" theme="horizontal">
+            <vaadin-item value="checked">
               <foxy-i18n key="checked"></foxy-i18n>
-            </vaadin-radio-button>
-            <vaadin-radio-button value="unchecked">
+            </vaadin-item>
+            <vaadin-item value="unchecked">
               <foxy-i18n key="unchecked"></foxy-i18n>
-            </vaadin-radio-button>
-          </vaadin-radio-group>
+            </vaadin-item>
+          </vaadin-list-box>
           <x-checkbox>
             <foxy-i18n
               key="tos_checkbox_settings-is_hidden"
