@@ -438,17 +438,17 @@ export class TemplateConfigForm extends Base<Item> {
           ${this.__getJsonAttribute(['location_filtering', 'usage']) != 'none'
             ? html`
                 <div class="grid grid-cols-2 gap-xs">
-                  ${this.__renderCartFilterLocationList('shipping')}
-                  ${this.__renderCartFilterLocationList('billing')}
+                  ${this.__renderCartFilterLocationList(LocationFilteringUsage.shipping)}
+                  ${this.__renderCartFilterLocationList(LocationFilteringUsage.billing)}
                 </div>
               `
-            : this.__renderCartFilterLocationList('both')}
+            : this.__renderCartFilterLocationList(LocationFilteringUsage.both)}
         </div>
       </x-group>
     `;
   }
 
-  private __renderCartFilterLocationList(which: 'billing' | 'shipping' | 'both') {
+  private __renderCartFilterLocationList(which: LocationFilteringUsage) {
     const filterType = `location_filtering.${which}`;
     return html`
       <x-group>
@@ -476,9 +476,32 @@ export class TemplateConfigForm extends Base<Item> {
             ></foxy-i18n>
           </vaadin-item>
         </vaadin-list-box>
-        <foxy-country-widget href="${this.__countriesURL()}"> </foxy-country-widget>
+        <foxy-country-widget
+          data-locationsfiltering-input="${which}"
+          @change=${this.__handleLocationFilteringChange}
+          href="${this.__countriesURL()}"
+        ></foxy-country-widget>
       </x-group>
     `;
+  }
+
+  private __handleLocationFilteringChange() {
+    const els = this.shadowRoot?.querySelectorAll('data-locationsfiltering-input');
+    if (!els || els.length == 0) {
+      return;
+    }
+    const values = Array.from(els).reduce(
+      (prev, cur) => {
+        const v = (cur as HTMLInputElement).value;
+        const type = cur.getAttribute('data-locationsfiltering-input') as LocationFilteringUsage;
+        if (type != LocationFilteringUsage.none && type != LocationFilteringUsage.independent) {
+          prev[type].push(v);
+        }
+        return prev;
+      },
+      { billing: [], shipping: [], both: [] }
+    );
+    this.__setJsonAttribute(['']);
   }
 
   private __handleLocationFiltering(ev: CustomEvent) {
