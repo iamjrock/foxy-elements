@@ -5,7 +5,7 @@ import { getMeta } from '../../../storygen/getMeta';
 import { getStory } from '../../../storygen/getStory';
 
 const summary: Summary = {
-  href: 'https://demo.foxycart.com/s/property_helpers/countries?include_regions',
+  href: 'https://demo.foxycart.com/property_helpers/countries?include_regions',
   nucleon: true,
   localName: 'foxy-country-widget',
   translatable: true,
