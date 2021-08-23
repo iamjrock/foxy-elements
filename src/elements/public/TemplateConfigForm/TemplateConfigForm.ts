@@ -1,23 +1,31 @@
-import { Checkbox, Choice, Group } from '../../private/index';
 import { CSSResultArray, PropertyDeclarations, TemplateResult, css, html } from 'lit-element';
-import { ConfigurableMixin } from '../../../mixins/configurable';
+import { Checkbox, Choice, Group } from '../../private/index';
 import { Item, TemplateConfigJson } from './types';
-import { NucleonElement } from '../NucleonElement';
-import { HALJSONResource, NucleonV8N } from '../NucleonElement/types';
 import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
+import { ConfigurableMixin } from '../../../mixins/configurable';
+import { CountryWidget } from '../CountryRegionWidget/CountryRegionWidget';
+import { DetailsElement } from '@vaadin/vaadin-details';
+import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
+import { ItemElement } from '@vaadin/vaadin-item';
+import { ListBoxElement } from '@vaadin/vaadin-list-box';
+import { NucleonElement } from '../NucleonElement';
+import { NucleonV8N } from '../NucleonElement/types';
 import { Tabs } from '../../private/Tabs/Tabs';
 import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
-import { DetailsElement } from '@vaadin/vaadin-details';
-import { ListBoxElement } from '@vaadin/vaadin-list-box';
-import { ItemElement } from '@vaadin/vaadin-item';
 import memoize from 'lodash-es/memoize';
-import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
-import { CountryWidget } from '../CountryRegionWidget/CountryRegionWidget';
 
 type Tab = { title: string; content: TemplateResult };
 
 const NS = 'template-config-form';
+
+enum LocationFilteringUsage {
+  none = 'none',
+  shipping = 'shipping',
+  billing = 'billing',
+  both = 'both',
+  independent = 'independent',
+}
 
 const Base = ScopedElementsMixin(
   ThemeableMixin(ConfigurableMixin(TranslatableMixin(NucleonElement, NS)))
@@ -40,12 +48,12 @@ export class TemplateConfigForm extends Base<Item> {
   static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
-      __cacheSuccess: { type: Boolean, attribute: false },
-      __customizeTemplate: { type: Boolean, attribute: false },
-      __hiddenProductOptions: { type: Array, attribute: false },
-      __enabledAnalytics: { type: Boolean, attribute: false },
-      __includeViaLoader: { type: Boolean, attribute: false },
-      __json: { type: Object, attribute: false },
+      __cacheSuccess: { attribute: false, type: Boolean },
+      __customizeTemplate: { attribute: false, type: Boolean },
+      __enabledAnalytics: { attribute: false, type: Boolean },
+      __hiddenProductOptions: { attribute: false, type: Array },
+      __includeViaLoader: { attribute: false, type: Boolean },
+      __json: { attribute: false, type: Object },
     };
   }
 
@@ -60,8 +68,8 @@ export class TemplateConfigForm extends Base<Item> {
       'vaadin-button': customElements.get('vaadin-button'),
       'vaadin-combo-box': customElements.get('vaadin-combo-box'),
       'vaadin-details': DetailsElement,
-      'vaadin-list-box': ListBoxElement,
       'vaadin-item': ItemElement,
+      'vaadin-list-box': ListBoxElement,
       'vaadin-text-area': customElements.get('vaadin-text-area'),
       'vaadin-text-field': customElements.get('vaadin-text-field'),
       'x-checkbox': Checkbox,
