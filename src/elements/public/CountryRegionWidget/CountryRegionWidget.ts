@@ -3,11 +3,14 @@ import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements
 import { ConfigurableMixin } from '../../../mixins/configurable';
 import { Data } from './types';
 import { NucleonElement } from '../NucleonElement';
+import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
 
 const NS = 'country-region';
 
-const Base = ScopedElementsMixin(ConfigurableMixin(TranslatableMixin(NucleonElement, NS)));
+const Base = ScopedElementsMixin(
+  ThemeableMixin(ConfigurableMixin(TranslatableMixin(NucleonElement, NS)))
+);
 
 interface Region {
   n: string;
