@@ -153,11 +153,12 @@ export class CountryWidget extends Base<Data> {
     this.__selectedCountry = this.__getCountry(ev.detail);
     this.__allRegions = true;
     this.__selectedRegions = [];
+    this.__handleChange();
   }
 
   private __handleChangeAllRegions(ev: CustomEvent) {
-    console.debug(ev);
     this.__allRegions = !!ev.detail;
+    this.__handleChange();
   }
 
   private __handleChangeEventRegion() {
@@ -168,13 +169,17 @@ export class CountryWidget extends Base<Data> {
         .filter((r: Checkbox) => r.checked)
         .map((r: Checkbox) => r.getAttribute('data-region') as string);
     }
+    this.__handleChange();
   }
 
   private __handleChange() {
-    this.value = {
+    const value = {
       ...this.__selectedCountry!,
-      selected_regions: this.__selectedRegions.map(r => this.__getRegion(r) as Region)!,
+      selected_regions: this.__allRegions
+        ? '*'
+        : this.__selectedRegions.map(r => this.__getRegion(r) as Region)!,
     };
-    this.dispatchEvent(new Event('change'));
+    console.log(value);
+    this.dispatchEvent(new CustomEvent('change', { detail: value }));
   }
 }
