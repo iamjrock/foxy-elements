@@ -1,9 +1,13 @@
 import { CSSResultArray, PropertyDeclarations, TemplateResult, css, html } from 'lit-element';
 import { Checkbox, Choice, Group } from '../../private/index';
+import {
+  CountryValue,
+  CountryWidget,
+  RegionValue,
+} from '../CountryRegionWidget/CountryRegionWidget';
 import { Item, TemplateConfigJson } from './types';
 import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
 import { ConfigurableMixin } from '../../../mixins/configurable';
-import { CountryWidget } from '../CountryRegionWidget/CountryRegionWidget';
 import { DetailsElement } from '@vaadin/vaadin-details';
 import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
 import { ItemElement } from '@vaadin/vaadin-item';
@@ -485,36 +489,69 @@ export class TemplateConfigForm extends Base<Item> {
     `;
   }
 
-  private __handleLocationFilteringChange() {
-    const els = this.shadowRoot?.querySelectorAll('data-locationsfiltering-input');
+  private __handleLocationFilteringChange(ev: CustomEvent) {
+    if (!this.__json) {
+      return;
+    }
+    const els = this.shadowRoot?.querySelectorAll('[data-locationsfiltering-input]');
     if (!els || els.length == 0) {
       return;
     }
-    const values = Array.from(els).reduce(
-      (prev, cur) => {
-        const v = (cur as HTMLInputElement).value;
-        const type = cur.getAttribute('data-locationsfiltering-input') as LocationFilteringUsage;
-        if (type != LocationFilteringUsage.none && type != LocationFilteringUsage.independent) {
-          prev[type].push(v);
-        }
+    const values = Array.from(els).reduce((prev, cur) => {
+      const countryValue = (cur as CountryWidget).value;
+      if (!countryValue) {
         return prev;
-      },
-      { billing: [], shipping: [], both: [] }
-    );
-    this.__setJsonAttribute(['']);
+      }
+      const [k, v] = this.__convertCountryToShippingFilterValue(countryValue);
+      const type = cur.getAttribute('data-locationsfiltering-input') as LocationFilteringUsage;
+      if (prev[type] === undefined) {
+        prev[type] = {};
+      }
+      if (type != LocationFilteringUsage.none && type != LocationFilteringUsage.independent) {
+        (prev as any)[type][k] = v;
+      }
+      return prev;
+    }, {} as any);
+    const locationFilterTypes = Object.keys(values);
+    if (locationFilterTypes.includes('billing')) {
+      this.__setJsonAttribute(['location_filtering', 'billing_filter_values'], values['billing']);
+    }
+    if (locationFilterTypes.includes('shipping')) {
+      this.__setJsonAttribute(['location_filtering', 'shipping_filter_values'], values['shipping']);
+    }
+    if (locationFilterTypes.includes('both')) {
+      this.__setJsonAttribute(['location_filtering', 'usage'], 'both');
+      this.__setJsonAttribute(['location_filtering', 'billing_filter_values'], values['both']);
+      this.__setJsonAttribute(['location_filtering', 'shipping_filter_values'], values['both']);
+    }
+  }
+
+  private __computeNewFilteringUsage(): 'shipping' {
+    return 'shipping';
+  }
+
+  private __convertCountryToShippingFilterValue(country: CountryValue): [string, string[] | '*'] {
+    let regions;
+    if (country.selected_regions && Array.isArray(country.selected_regions)) {
+      if (country.selected_regions.length > 0) {
+        regions = country.selected_regions.map((r: RegionValue) => r.c);
+      } else {
+        regions = [];
+      }
+    } else {
+      regions = '*';
+    }
+    return [country.cc2, regions as '*' | string[]];
   }
 
   private __handleLocationFiltering(ev: CustomEvent) {
-    console.log(ev);
     if ((ev.target as HTMLInputElement).getAttribute('data-tag-name') === 'x-checkbox') {
-      console.log('yes');
       if (ev.detail) {
         this.__setJsonAttribute(['location_filtering', 'usage'], 'independent');
       } else {
         this.__setJsonAttribute(['location_filtering', 'usage'], 'none');
       }
     } else {
-      console.log('no');
       console.log((ev.target as HTMLInputElement).getAttribute('data-tag-name'));
     }
   }
