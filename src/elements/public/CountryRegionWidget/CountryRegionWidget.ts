@@ -33,6 +33,8 @@ export interface CountryValue extends Country {
   selected_regions: Array<Region> | '*';
 }
 
+export type RegionValue = Region;
+
 export class CountryWidget extends Base<Data> {
   static get scopedElements(): ScopedElementsMap {
     return {
