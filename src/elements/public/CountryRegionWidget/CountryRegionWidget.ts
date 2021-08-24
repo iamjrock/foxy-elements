@@ -173,13 +173,12 @@ export class CountryWidget extends Base<Data> {
   }
 
   private __handleChange() {
-    const value = {
+    this.value = {
       ...this.__selectedCountry!,
       selected_regions: this.__allRegions
         ? '*'
         : this.__selectedRegions.map(r => this.__getRegion(r) as Region)!,
     };
-    console.log(value);
-    this.dispatchEvent(new CustomEvent('change', { detail: value }));
+    this.dispatchEvent(new CustomEvent('change', { detail: this.value }));
   }
 }
