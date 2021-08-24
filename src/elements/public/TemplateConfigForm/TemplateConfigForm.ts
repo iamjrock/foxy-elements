@@ -439,7 +439,7 @@ export class TemplateConfigForm extends Base<Item> {
           <x-checkbox class="py-s" @change=${this.__handleLocationFiltering.bind(this)}>
             <foxy-i18n ns=${this.ns} key="location_filtering.independently"></foxy-i18n>
           </x-checkbox>
-          ${this.__getJsonAttribute(['location_filtering', 'usage']) != 'none'
+          ${this.__getJsonAttribute(['location_filtering', 'usage']) === 'independent'
             ? html`
                 <div class="grid grid-cols-2 gap-xs">
                   ${this.__renderCartFilterLocationList(LocationFilteringUsage.shipping)}
