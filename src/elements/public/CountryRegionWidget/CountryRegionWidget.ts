@@ -30,7 +30,7 @@ interface Country {
 }
 
 export interface CountryValue extends Country {
-  selected_regions: Array<Region>;
+  selected_regions: Array<Region> | '*';
 }
 
 export class CountryWidget extends Base<Data> {
