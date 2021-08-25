@@ -36,6 +36,8 @@ export interface CountryValue extends Country {
 export type RegionValue = Region;
 
 export class CountryWidget extends Base<Data> {
+  static CountryData: Data | null = null;
+
   static get scopedElements(): ScopedElementsMap {
     return {
       'foxy-i18n': I18N,
@@ -48,37 +50,67 @@ export class CountryWidget extends Base<Data> {
     return {
       ...super.properties,
       __allRegions: { attribute: false, type: Boolean },
-      __selectedCountry: { attribute: false, type: Object },
-      __selectedRegions: { attribute: false, type: Array },
+      country: {
+        converter: v => {
+          if (v) {
+            if (CountryWidget.CountryData != null) {
+              return { ...(CountryWidget.CountryData as any)[v] };
+            } else {
+              return { cc2: v };
+            }
+          }
+          return null;
+        },
+      },
+      omit: { type: Array },
+      regions: { type: Array },
     };
   }
 
   public value: CountryValue | undefined;
 
+  public omit: string[] = [];
+
+  private country: Country | null = null;
+
+  private regions: Array<string> = [];
+
   private __allRegions = true;
 
   private static __regionsQuery = '?include_regions';
 
-  private __selectedCountry: Country | null = null;
-
   private __selectedRegions: Array<string> = [];
 
+  constructor() {
+    super();
+    if (CountryWidget.CountryData) {
+      this.data = CountryWidget.CountryData;
+    }
+    this.addEventListener('update', () => {
+      if (this.data) {
+        CountryWidget.CountryData = this.data;
+      }
+    });
+  }
+
   render(): TemplateResult {
+    const currentCountry = this.country ? this.country.cc2 : 'no value';
     return html`
       <x-dropdown
         label="country"
         data-testid="countries"
         ?disabled=${!this.data}
+        value="${currentCountry}"
         @change=${this.__handleChangeEventCountry.bind(this)}
         .getText=${(v: string) => this.t(v)}
         .items=${this.data && typeof this.data !== 'string'
-          ? Object.values(this.data).map((c: any) => c.cc2)
+          ? Object.values(this.data)
+              .map((c: any) => c.cc2)
+              .filter((c: string) => !this.omit.includes(c) || c == currentCountry)
           : []}
       >
       </x-dropdown>
-      ${this.__selectedCountry &&
-      this.__selectedCountry.regions &&
-      !Array.isArray(this.__selectedCountry.regions)
+      ${this.country && this.country.regions && !Array.isArray(this.country.regions)
         ? html`
             <div class="ml-m mt-s grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-s md:gap-m">
               <x-checkbox
@@ -90,7 +122,7 @@ export class CountryWidget extends Base<Data> {
               </x-checkbox>
               ${this.__allRegions
                 ? ''
-                : Object.values(this.__selectedCountry.regions).map((r: Region) =>
+                : Object.values(this.country.regions).map((r: Region) =>
                     this.__renderRegionInput(r)
                   )}
             </div>
@@ -99,12 +131,20 @@ export class CountryWidget extends Base<Data> {
     `;
   }
 
+  public setCountry(cc2: string): void {
+    if (this.data) {
+      this.country = this.__getCountry(cc2);
+    }
+  }
+
+  public setRegions(regions: string[]): void {
+    if (this.data) {
+      this.__selectedRegions = regions;
+    }
+  }
+
   private __renderRegionInput(region: Region): TemplateResult {
-    if (
-      this.__selectedCountry &&
-      !Array.isArray(this.__selectedCountry.regions) &&
-      this.__selectedCountry.regions
-    ) {
+    if (this.country && !Array.isArray(this.country.regions) && this.country.regions) {
       return html`
         <x-checkbox
           class="text-s"
@@ -117,7 +157,7 @@ export class CountryWidget extends Base<Data> {
           <foxy-i18n
             lang="${this.lang}"
             ns="${this.ns}"
-            key="${this.__selectedCountry.cc2}.${region.c}"
+            key="${this.country.cc2}.${region.c}"
           ></foxy-i18n>
         </x-checkbox>
       `;
@@ -128,9 +168,9 @@ export class CountryWidget extends Base<Data> {
 
   private __hasRegions() {
     if (
-      !this.__selectedCountry ||
-      this.__selectedCountry.has_regions === false ||
-      Array.isArray(this.__selectedCountry.regions)
+      !this.country ||
+      this.country.has_regions === false ||
+      Array.isArray(this.country.regions)
     ) {
       return false;
     }
@@ -148,11 +188,11 @@ export class CountryWidget extends Base<Data> {
     if (!this.__hasRegions()) {
       return null;
     }
-    return (this.__selectedCountry!.regions as Record<string, Region>)[c];
+    return (this.country!.regions as Record<string, Region>)[c];
   }
 
   private __handleChangeEventCountry(ev: CustomEvent) {
-    this.__selectedCountry = this.__getCountry(ev.detail);
+    this.country = this.__getCountry(ev.detail);
     this.__allRegions = true;
     this.__selectedRegions = [];
     this.__handleChange();
@@ -175,12 +215,16 @@ export class CountryWidget extends Base<Data> {
   }
 
   private __handleChange() {
+    this.__setValue();
+    this.dispatchEvent(new CustomEvent('change', { detail: this.value }));
+  }
+
+  private __setValue() {
     this.value = {
-      ...this.__selectedCountry!,
+      ...this.country!,
       selected_regions: this.__allRegions
         ? '*'
         : this.__selectedRegions.map(r => this.__getRegion(r) as Region)!,
     };
-    this.dispatchEvent(new CustomEvent('change', { detail: this.value }));
   }
 }
