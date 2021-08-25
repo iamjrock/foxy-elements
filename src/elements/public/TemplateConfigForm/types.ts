@@ -87,8 +87,8 @@ export interface TemplateConfigJson {
     usage: 'none' | 'shipping' | 'billing' | 'both' | 'independent';
     shipping_filter_type: 'blacklist' | 'whitelist';
     billing_filter_type: 'blacklist' | 'whitelist';
-    shipping_filter_values: 'blacklist' | 'whitelist';
-    billing_filter_values: 'blacklist' | 'whitelist';
+    shipping_filter_values: [] | Record<string, Array<string>>;
+    billing_filter_values: [] | Record<string, Array<string>>;
   };
   postal_code_lookup: {
     usage: 'none' | 'required';
