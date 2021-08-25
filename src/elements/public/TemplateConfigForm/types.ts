@@ -36,7 +36,7 @@ export interface TemplateConfigJson {
   use_checkout_confirmation_window: {
     usage: 'none' | 'required';
   };
-  support_payment_cards: Array<
+  supportted_payment_cards: Array<
     'visa' | 'mastercard' | 'discover' | 'amex' | 'dinersclub' | 'maestro' | 'laser'
   >;
   custom_checkout_field_requirements: {
