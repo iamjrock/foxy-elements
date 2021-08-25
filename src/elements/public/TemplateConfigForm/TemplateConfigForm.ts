@@ -454,6 +454,11 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderCartFilterLocationList(which: LocationFilteringUsage) {
     const filterType = `location_filtering.${which}`;
+    const valuesList =
+      this.__getJsonAttribute([
+        'location_filtering',
+        `${which == 'billing' ? 'billing' : 'shipping'}_filter_values`,
+      ]) ?? {};
     return html`
       <x-group>
         ${which != 'both'
@@ -480,16 +485,24 @@ export class TemplateConfigForm extends Base<Item> {
             ></foxy-i18n>
           </vaadin-item>
         </vaadin-list-box>
-        <foxy-country-widget
-          data-locationsfiltering-input="${which}"
-          @change=${this.__handleLocationFilteringChange}
-          href="${this.__countriesURL()}"
-        ></foxy-country-widget>
+        ${[...Object.entries(valuesList), ['', []]].map(([k, v]) => {
+          return html`
+            <foxy-country-widget
+              class="mt-m"
+              data-locationsfiltering-input="${which}"
+              @change=${this.__handleLocationFilteringChange}
+              country="${k}"
+              regions="${JSON.stringify(v)}"
+              omit="${JSON.stringify(Object.keys(valuesList))}"
+              href="${this.__countriesURL()}"
+            ></foxy-country-widget>
+          `;
+        })}
       </x-group>
     `;
   }
 
-  private __handleLocationFilteringChange(ev: CustomEvent) {
+  private __handleLocationFilteringChange() {
     if (!this.__json) {
       return;
     }
