@@ -50,7 +50,9 @@ export class CartTemplateForm extends Base<Item> {
       'vaadin-text-area': customElements.get('vaadin-text-area'),
       'vaadin-text-field': customElements.get('vaadin-text-field'),
       'x-checkbox': Checkbox,
+      'x-choice': Choice,
       'x-group': Group,
+      'x-property-table': PropertyTable,
     };
   }
 
@@ -78,7 +80,7 @@ export class CartTemplateForm extends Base<Item> {
     };
   });
 
-  private __customizeTemplate = false;
+  private __customizeTemplate: 'default' | 'url' | 'clipboard' = 'default';
 
   render(): TemplateResult {
     return html`
@@ -93,31 +95,40 @@ export class CartTemplateForm extends Base<Item> {
         ns=${this.ns}
         id="confirm-cache"
         @hide=${this.__handleConfirmCache}
-      >
+        >
       </foxy-internal-confirm-dialog>
-      <vaadin-text-field
-        class="w-full"
-        label=${this.t('description').toString()}
-        value=${ifDefined(this.form?.description)}
-        data-testid="description"
-        @input=${this.__bindField('description')}
-        error-message=${this.__getErrorMessage('description')}
-      >
-      </vaadin-text-field>
-      <x-checkbox
+      ${
+        ifDefined(this.form?.description)
+          ? html`
+              <vaadin-text-field
+                class="w-full mb-s"
+                label="${this.t('description.label')}"
+                value=${this.form.description}
+                readonly
+              >
+              </vaadin-text-field>
+            `
+          : ''
+      }
+      <x-choice
+        data-testid="template-type"
         class="w-full py-m"
         ?readonly=${this.readonly}
+        vertical-align="top"
+        .items=${['default', 'url', 'clipboard']}
         @change=${(ev: CustomEvent) => this._setCustomizeState(ev)}
-      >
-        <foxy-i18n key="customize-template" lang=${this.lang} ns=${this.ns}> </foxy-i18n>
-      </x-checkbox>
-      ${this.__customizeTemplate
-        ? html`
-        <x-group frame>
-          <div class="p-m">
+        .getText=${(v: string) => html`
+          <div class="flex flex-col justify-start my-s">
+            <div class="w-full">${this.t(`template-type.label-${v}`)}</div>
+            <div class="w-full text-s">${this.t(`template-type.description-${v}`)}</div>
+          </div>
+        `}
+        >
+        <foxy-i18n key="customize-template" lang=${this.lang} ns=${this.ns}></foxy-i18n>
+        <div slot="url-conditional">
+          <div class="flex items-center mt-0 mb-m">
             <vaadin-text-field
-              class="w-full"
-              label=${this.t('content-url').toString()}
+              class="mr-s flex-grow"
               value=${ifDefined(this.form?.content_url)}
               data-testid="content_url"
               @input=${this.__bindField('content_url')}
@@ -132,50 +143,59 @@ export class CartTemplateForm extends Base<Item> {
                 this.form.content_url.length > 0 &&
                 this.__getErrorMessage('content_url').length == 0
               )}
-              class="mt-s">
+              >
               <foxy-i18n 
                 lang=${this.lang}
                 key="cache"
                 ns=${this.ns}>
             </vaadin-button>
-            ${
-              this.__cacheSuccess
-                ? html`<foxy-i18n key="cache-success" lang=${this.lang} ns=${this.ns}></foxy-i18n>`
-                : ''
-            }
-            ${
-              this.__cacheErrors.length
-                ? html`<foxy-i18n
-                    class="color-error"
-                    key="cache-error"
-                    lang=${this.lang}
-                    ns=${this.ns}
-                  ></foxy-i18n>`
-                : ''
-            }
           </div>
-        </x-group>
-        <x-group frame>
-          <div class="p-m">
-            <vaadin-text-area
-              id="cached-content"
-              data-testid="content"
-              class="w-full"
-              label="${this.t('content')}"
-              value=${ifDefined(this.form?.content)}
-              >
-            </vaadin-text-area>
-          </div>
-        </x-group>
-          `
-        : html``}
+          ${
+            this.__cacheSuccess
+              ? html`<foxy-i18n key="cache-success" lang=${this.lang} ns=${this.ns}></foxy-i18n>`
+              : ''
+          }
+          ${
+            this.__cacheErrors.length
+              ? html`<foxy-i18n
+                  class="color-error"
+                  key="cache-error"
+                  lang=${this.lang}
+                  ns=${this.ns}
+                ></foxy-i18n>`
+              : ''
+          }
+        </div>
+        <div slot="clipboard-conditional">
+          <vaadin-text-area
+            id="cached-content"
+            data-testid="content"
+            class="w-full"
+            label="${this.t('content')}"
+            value=${ifDefined(this.form?.content)}
+            >
+          </vaadin-text-area>
+        </div>
+      </x-choice>
+      <x-property-table class="mb-xl"
+        .items=${(['date_modified', 'date_created'] as const).map(field => ({
+          name: this.t(field),
+          value: this.data
+            ? html`
+                <foxy-i18n key="date" options='{"value": "${this.data[field]}"}'></foxy-i18n>
+                <foxy-i18n key="time" options='{"value": "${this.data[field]}"}'></foxy-i18n>
+              `
+            : '',
+        }))}
+                       >
+      </x-property-table>
       <vaadin-button
         data-testid="action"
         theme=${this.in('idle') ? `primary ${this.href ? 'error' : 'success'}` : ''}
         class="w-full"
         ?disabled=${!this.errors.length}
         @click=${this.__handleActionSubmit}
-      >
+        >
         <foxy-i18n lang=${this.lang} key="update" ns=${this.ns}> </foxy-i18n>
       </vaadin-button>
     `;
@@ -195,7 +215,7 @@ export class CartTemplateForm extends Base<Item> {
     }
   }
 
-  private _setCustomizeState(ev: CustomEvent) {
+  private _setCustomizeState(ev: CustomEvent): void {
     this.__customizeTemplate = ev.detail;
   }
 
