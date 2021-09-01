@@ -1,15 +1,16 @@
-import { Checkbox, Group } from '../../private/index';
-import { css, html, CSSResultArray, PropertyDeclarations, TemplateResult } from 'lit-element';
+import { CSSResultArray, PropertyDeclarations, TemplateResult, css, html } from 'lit-element';
+import { Checkbox, Choice, Group, PropertyTable } from '../../private/index';
+import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
+import { AttributePart } from 'lit-html';
 import { ConfigurableMixin } from '../../../mixins/configurable';
+import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
 import { Item } from './types';
 import { NucleonElement } from '../NucleonElement';
 import { NucleonV8N } from '../NucleonElement/types';
-import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
 import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import memoize from 'lodash-es/memoize';
-import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
 
 const NS = 'cart-template-form';
 
@@ -32,8 +33,8 @@ export class CartTemplateForm extends Base<Item> {
   static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
-      __cacheSuccess: { type: Boolean, attribute: false },
-      __customizeTemplate: { type: Boolean, attribute: false },
+      __cacheSuccess: { attribute: false, type: Boolean },
+      __customizeTemplate: { attribute: false, type: String },
     };
   }
 
