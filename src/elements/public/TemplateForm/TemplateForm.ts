@@ -1,24 +1,37 @@
+import {
+  AdminEmailTemplateItem,
+  CartIncludeTemplateItem,
+  CartTemplateItem,
+  CheckoutTemplateItem,
+  CustomerEmailTemplateItem,
+} from './types';
 import { CSSResultArray, PropertyDeclarations, TemplateResult, css, html } from 'lit-element';
 import { Checkbox, Choice, Group, PropertyTable } from '../../private/index';
 import { ScopedElementsMap, ScopedElementsMixin } from '@open-wc/scoped-elements';
-import { AttributePart } from 'lit-html';
 import { ConfigurableMixin } from '../../../mixins/configurable';
 import { InternalConfirmDialog } from '../../internal/InternalConfirmDialog';
-import { Item } from './types';
 import { NucleonElement } from '../NucleonElement';
 import { NucleonV8N } from '../NucleonElement/types';
+import { Tabs } from '../../private/Tabs/Tabs';
 import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
 import { ifDefined } from 'lit-html/directives/if-defined';
 import memoize from 'lodash-es/memoize';
 
-const NS = 'cart-template-form';
+const NS = 'template-form';
 
 const Base = ScopedElementsMixin(
   ThemeableMixin(ConfigurableMixin(TranslatableMixin(NucleonElement, NS)))
 );
 
-export class CartTemplateForm extends Base<Item> {
+type Item =
+  | AdminEmailTemplateItem
+  | CartIncludeTemplateItem
+  | CartTemplateItem
+  | CheckoutTemplateItem
+  | CustomerEmailTemplateItem;
+
+export class TemplateForm extends Base<Item> {
   static get styles(): CSSResultArray {
     return [
       ...super.styles,
@@ -53,17 +66,29 @@ export class CartTemplateForm extends Base<Item> {
       'x-choice': Choice,
       'x-group': Group,
       'x-property-table': PropertyTable,
+      'x-tabs': Tabs,
     };
   }
 
   static get v8n(): NucleonV8N<Item> {
     return [
       ({ description: v }) => !v || v.length <= 100 || 'first_name_too_long',
-      ({ content: v }) => !v || v.length <= 50 || 'content_invalid',
-      ({ content_url: v }) => !v || (v && v.length <= 300) || 'content_url_invalid',
-      ({ content_url: v }) => !v || CartTemplateForm.__isValidUrl(v) || 'content_url_invalid',
+      item => {
+        const v = (item as CartTemplateItem).content;
+        return !v || v.length <= 50 || 'content_invalid';
+      },
+      item => {
+        const v = (item as CartTemplateItem).content_url;
+        return !v || (v && v.length <= 300) || 'content_url_invalid';
+      },
+      item => {
+        const v = (item as CartTemplateItem).content_url;
+        return !v || TemplateForm.__isValidUrl(v) || 'content_url_invalid';
+      },
     ];
   }
+
+  private __isEmail = false;
 
   private __cacheErrors = [];
 
@@ -82,7 +107,56 @@ export class CartTemplateForm extends Base<Item> {
 
   private __customizeTemplate: 'default' | 'url' | 'clipboard' = 'default';
 
+  get href(): string {
+    return super.href;
+  }
+
+  set href(value: string) {
+    super.href = value;
+    if (value.includes('/email_templates/')) {
+      this.__isEmail = true;
+    } else {
+      this.__isEmail = false;
+    }
+  }
+
   render(): TemplateResult {
+    return html`${this.__isEmail
+      ? html`
+          <x-tabs size="2">
+            ${['html', 'text'].map(
+              (tab, index) => html`
+                <foxy-i18n
+                  data-testclass="i18n"
+                  slot="tab-${index}"
+                  lang="${this.lang}"
+                  key="${tab}-version"
+                  ns="${this.ns}"
+                ></foxy-i18n>
+                <div class="pt-s" slot="panel-${index}">${this.__renderForm(tab)}</div>
+              `
+            )}
+          </x-tabs>
+        `
+      : this.__renderForm()}`;
+  }
+
+  __renderForm(contentType: 'html' | 'text' = 'text'): TemplateResult {
+    let contentField: 'content' | 'content_html' | 'content_text';
+    let urlField: 'content_url' | 'content_html_url' | 'content_text_url';
+    if (this.__isEmail) {
+      if (contentType == 'html') {
+        contentField = 'content_html';
+        urlField = 'content_html_url';
+      } else {
+        contentField = 'content_text';
+        urlField = 'content_text_url';
+      }
+    } else {
+      contentField = 'content';
+      urlField = 'content_url';
+    }
+
     return html`
       <foxy-internal-confirm-dialog
         data-testid="confirm-cache"
@@ -98,7 +172,7 @@ export class CartTemplateForm extends Base<Item> {
         >
       </foxy-internal-confirm-dialog>
       ${
-        ifDefined(this.form?.description)
+        ifDefined(this.form.description)
           ? html`
               <vaadin-text-field
                 class="w-full mb-s"
@@ -109,6 +183,14 @@ export class CartTemplateForm extends Base<Item> {
               </vaadin-text-field>
             `
           : ''
+      }
+      ${
+        this.__isEmail
+          ? html`
+              <vaadin-text-field class="w-full mb-s" label="${this.t('email.subject')}">
+              </vaadin-text-field>
+            `
+          : ``
       }
       <x-choice
         data-testid="template-type"
@@ -129,19 +211,19 @@ export class CartTemplateForm extends Base<Item> {
           <div class="flex items-center mt-0 mb-m">
             <vaadin-text-field
               class="mr-s flex-grow"
-              value=${ifDefined(this.form?.content_url)}
+              value=${ifDefined((this.form as any)[urlField])}
               data-testid="content_url"
-              @input=${this.__bindField('content_url')}
-              error-message=${this.__getErrorMessage('content_url')}
+              @input=${this.__bindField(urlField as any)}
+              error-message=${this.__getErrorMessage(urlField)}
               >
             </vaadin-text-field>
             <vaadin-button 
               @click=${this.__handleActionCache}
               ?disabled=${!(
                 this.form &&
-                this.form.content_url &&
-                this.form.content_url.length > 0 &&
-                this.__getErrorMessage('content_url').length == 0
+                (this.form as any)[urlField] &&
+                ((this.form as any)[urlField] as string).length > 0 &&
+                this.__getErrorMessage(urlField).length == 0
               )}
               >
               <foxy-i18n 
@@ -172,7 +254,7 @@ export class CartTemplateForm extends Base<Item> {
             data-testid="content"
             class="w-full"
             label="${this.t('content')}"
-            value=${ifDefined(this.form?.content)}
+            value=${ifDefined((this.form as any)[contentField])}
             >
           </vaadin-text-area>
         </div>
@@ -182,8 +264,8 @@ export class CartTemplateForm extends Base<Item> {
           name: this.t(field),
           value: this.data
             ? html`
-                <foxy-i18n key="date" options='{"value": "${this.data[field]}"}'></foxy-i18n>
-                <foxy-i18n key="time" options='{"value": "${this.data[field]}"}'></foxy-i18n>
+                <foxy-i18n key="date" options='{"value": "${this.data![field]}"}'></foxy-i18n>
+                <foxy-i18n key="time" options='{"value": "${this.data![field]}"}'></foxy-i18n>
               `
             : '',
         }))}

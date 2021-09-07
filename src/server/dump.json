@@ -328,6 +328,35 @@
       "date_modified": "2013-08-16T14:13:54-0700"
     }
   ],
+  "receipt_templates": [
+    {
+      "id": 0,
+      "store": 0,
+      "description": "Receipt Template",
+      "content": "<!DOCTYPE html><html id=\"fc\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n\n    <title>{{ config.store_name }} Cart</title>\n\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimal-ui\">\n    <!--[if lt IE 9 ]>\n      <script type=\"text/javascript\">\n      var IEElms = ['article', 'aside', 'header', 'main', 'nav', 'section'];\n      for (var i = 0; i < IEElms.length; i++) {\n      document.createElement(IEElms[i]);\n      };\n      </script>\n    <![endif]-->\n    <link href=\"{{ config.css_file }}\" rel=\"stylesheet\" media=\"screen\">\n    <!-- FC script insertion -->{{ fc_header_content|raw }}<!-- /FC script insertion -->\n    <!--[if lt IE 9 ]>\n      <script src=\"{{ config.cdn_static_path }}scripts/respond/respond.1.4.2.js\" charset=\"utf-8\"></script>\n      <style>\n      #fc label.fc-form-label--with-placeholder {\n      display:block !important;\n      left:0 !important;\n      width:auto !important;\n      height:50px !important;\n      clip:auto !important;\n      position:relative !important;\n      text-align:left !important;\n      }\n      </style>\n    <![endif]-->\n  </head>\n  <body class=\"fc-context--cart-fullpage\" data-fc-context='{\"cart_is_fullpage\":true}'>\n\n    {% set cart_is_fullpage = true %}\n    <div data-fc-container=\"cart\">\n      {% embed 'cart.inc.twig' %}\n      {% endembed %}\n    </div>\n\n\n\n    <!-- FC footer script insertion -->{% include template_from_string(fc_footer_content) %}<!-- /FC footer scripts -->\n  </body>\n</html>\n",
+      "content_url": "http://example.com/cart-template",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 1,
+      "store": 0,
+      "description": "Second Receipt Template",
+      "content": "<p>This is a twig content</p>",
+      "content_url": "",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 2,
+      "store": 0,
+      "description": "Third Receipt Template",
+      "content": "",
+      "content_url": "https://example/com/twig-contet.html",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    }
+  ],
   "stores": [
     {
       "id": 0,
@@ -449,6 +478,35 @@
       "date_modified": "2012-02-29T13:55:09-0800"
     }
   ],
+  "cart_include_templates": [
+    {
+      "id": 0,
+      "store": 0,
+      "description": "Cart Include Template",
+      "content": "<!DOCTYPE html><html id=\"fc\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n\n    <title>{{ config.store_name }} Cart</title>\n\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimal-ui\">\n    <!--[if lt IE 9 ]>\n      <script type=\"text/javascript\">\n      var IEElms = ['article', 'aside', 'header', 'main', 'nav', 'section'];\n      for (var i = 0; i < IEElms.length; i++) {\n      document.createElement(IEElms[i]);\n      };\n      </script>\n    <![endif]-->\n    <link href=\"{{ config.css_file }}\" rel=\"stylesheet\" media=\"screen\">\n    <!-- FC script insertion -->{{ fc_header_content|raw }}<!-- /FC script insertion -->\n    <!--[if lt IE 9 ]>\n      <script src=\"{{ config.cdn_static_path }}scripts/respond/respond.1.4.2.js\" charset=\"utf-8\"></script>\n      <style>\n      #fc label.fc-form-label--with-placeholder {\n      display:block !important;\n      left:0 !important;\n      width:auto !important;\n      height:50px !important;\n      clip:auto !important;\n      position:relative !important;\n      text-align:left !important;\n      }\n      </style>\n    <![endif]-->\n  </head>\n  <body class=\"fc-context--cart-fullpage\" data-fc-context='{\"cart_is_fullpage\":true}'>\n\n    {% set cart_is_fullpage = true %}\n    <div data-fc-container=\"cart\">\n      {% embed 'cart.inc.twig' %}\n      {% endembed %}\n    </div>\n\n\n\n    <!-- FC footer script insertion -->{% include template_from_string(fc_footer_content) %}<!-- /FC footer scripts -->\n  </body>\n</html>\n",
+      "content_url": "http://example.com/cart-template",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 1,
+      "store": 0,
+      "description": "Second Cart Include Template",
+      "content": "<p>This is a twig content</p>",
+      "content_url": "",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 2,
+      "store": 0,
+      "description": "Third Cart Include Template",
+      "content": "",
+      "content_url": "https://example/com/twig-contet.html",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    }
+  ],
   "cart_templates": [
     {
       "id": 0,
@@ -478,6 +536,36 @@
       "date_modified": "2012-08-10T11:58:54-0700"
     }
   ],
+  "checkout_templates": [
+    {
+      "id": 0,
+      "store": 0,
+      "description": "Checkout Template",
+      "content": "<!DOCTYPE html><html id=\"fc\">\n  <head>\n    <meta charset=\"utf-8\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge,chrome=1\">\n\n    <title>{{ config.store_name }} Cart</title>\n\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, minimal-ui\">\n    <!--[if lt IE 9 ]>\n      <script type=\"text/javascript\">\n      var IEElms = ['article', 'aside', 'header', 'main', 'nav', 'section'];\n      for (var i = 0; i < IEElms.length; i++) {\n      document.createElement(IEElms[i]);\n      };\n      </script>\n    <![endif]-->\n    <link href=\"{{ config.css_file }}\" rel=\"stylesheet\" media=\"screen\">\n    <!-- FC script insertion -->{{ fc_header_content|raw }}<!-- /FC script insertion -->\n    <!--[if lt IE 9 ]>\n      <script src=\"{{ config.cdn_static_path }}scripts/respond/respond.1.4.2.js\" charset=\"utf-8\"></script>\n      <style>\n      #fc label.fc-form-label--with-placeholder {\n      display:block !important;\n      left:0 !important;\n      width:auto !important;\n      height:50px !important;\n      clip:auto !important;\n      position:relative !important;\n      text-align:left !important;\n      }\n      </style>\n    <![endif]-->\n  </head>\n  <body class=\"fc-context--cart-fullpage\" data-fc-context='{\"cart_is_fullpage\":true}'>\n\n    {% set cart_is_fullpage = true %}\n    <div data-fc-container=\"cart\">\n      {% embed 'cart.inc.twig' %}\n      {% endembed %}\n    </div>\n\n\n\n    <!-- FC footer script insertion -->{% include template_from_string(fc_footer_content) %}<!-- /FC footer scripts -->\n  </body>\n</html>\n",
+      "content_url": "http://example.com/cart-template",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 1,
+      "store": 0,
+      "description": "Second Checkout Template",
+      "content": "<p>This is a twig content</p>",
+      "content_url": "",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    },
+    {
+      "id": 2,
+      "store": 0,
+      "description": "Third Checkout Template",
+      "content": "",
+      "content_url": "https://example/com/twig-contet.html",
+      "date_created": "2012-08-10T11:58:54-0700",
+      "date_modified": "2012-08-10T11:58:54-0700"
+    }
+  ],
+
   "customer_portal_settings": [
     {
       "store": 0,

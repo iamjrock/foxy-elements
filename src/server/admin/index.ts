@@ -1,7 +1,6 @@
 import { Collection, Table } from 'dexie';
 import { DemoDatabase, db, whenDbReady } from '../DemoDatabase';
 import { HALJSONResource } from '../../elements/public/NucleonElement/types';
-import { composeCartTemplate } from './composers/composeCartTemplate';
 import { composeCollection } from './composers/composeCollection';
 import { composeCountries } from './composers/composeCountries';
 import { composeCustomer } from './composers/composeCustomer';
@@ -17,6 +16,7 @@ import { composeTemplateCache } from './composers/composeTemplateCache';
 import { composeTemplateConfig } from './composers/composeTemplateConfig';
 import { composeTransaction } from './composers/composeTransaction';
 import { composeUser } from './composers/composeUser';
+import { createTemplateComposeFunction } from './composers/composeTemplates';
 import { getPagination } from '../getPagination';
 import { router } from '../router';
 
@@ -529,7 +529,7 @@ router.get('/s/admin/stores/:id/users', async ({ params, request }) => {
     db.users.where('store').equals(store).offset(offset).limit(limit).toArray(),
   ]);
 
-  const body = composeCollection({ composeItem: composeUser, rel, url, count, items });
+  const body = composeCollection({ composeItem: composeUser, count, items, rel, url });
   return new Response(JSON.stringify(body));
 });
 
@@ -538,18 +538,18 @@ router.post('/s/admin/stores/:id/users', async ({ params, request }) => {
 
   const body = await request.json();
   const id = await db.users.add({
-    store: parseInt(params.id),
-    first_name: body.first_name ?? '',
-    last_name: body.last_name ?? '',
-    email: body.email ?? '',
-    phone: body.phone ?? '',
     affiliate_id: body.affiliate_id ?? 0,
-    is_programmer: body.is_programmer ?? false,
-    is_front_end_developer: body.is_front_end_developer ?? false,
-    is_designer: body.is_designer ?? false,
-    is_merchant: body.is_merchant ?? false,
     date_created: new Date().toISOString(),
     date_modified: new Date().toISOString(),
+    email: body.email ?? '',
+    first_name: body.first_name ?? '',
+    is_designer: body.is_designer ?? false,
+    is_front_end_developer: body.is_front_end_developer ?? false,
+    is_merchant: body.is_merchant ?? false,
+    is_programmer: body.is_programmer ?? false,
+    last_name: body.last_name ?? '',
+    phone: body.phone ?? '',
+    store: parseInt(params.id),
   });
 
   return router.handle(`/s/admin/users/${id}`, 'GET')!.handlerPromise;
@@ -593,7 +593,7 @@ router.get('/s/admin/stores/:id/taxes', async ({ request }) => {
   return respondItems(db.taxes, composeTax, request.url, 'fx:taxes');
 });
 
-
+// Templates
 router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
   return respondItems(db.emailTemplates, composeCartTemplate, request.url, 'fx:email_templates');
 });
@@ -602,15 +602,27 @@ router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);
 });
 
-router.get('/s/admin/stores/:id/cart_templates', async ({ request }) => {
-  return respondItems(db.cartTemplates, composeCartTemplate, request.url, 'fx:cart_templates');
+router.get('/s/admin/stores/:id/:template_type', async ({ params, request }) => {
+  const tplDict: Record<string, Dexie.Table> = {
+    cart_include_templates: db.cartIncludeTemplates,
+    cart_templates: db.cartTemplates,
+    checkout_templates: db.checkoutTemplates,
+    email_templates: db.emailTemplates,
+    receipt_templates: db.checkoutTemplates,
+  };
+  const tplDatabase = tplDict[params.template_type] ?? null;
+  if (tplDatabase === null) {
+    return new Response(null, { status: 404 });
+  }
+  return respondItems(
+    db.cartTemplates,
+    createTemplateComposeFunction(params.template_type),
+    request.url,
+    `fx:${params.template_type}`
+  );
 });
 
-router.get('/s/admin/cart_templates/:id', async ({ params }) => {
-  return respondItemById(db.cartTemplates, parseInt(params.id), composeCartTemplate);
-});
-
-router.post('/s/admin/cart_templates/:id/cache', async () => {
+router.post('/s/admin/:template_type/:id/cache', async () => {
   return new Response(JSON.stringify(composeTemplateCache()));
 });
 
