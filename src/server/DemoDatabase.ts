@@ -1,7 +1,7 @@
 import Dexie from 'dexie';
 import IDBExportImport from 'indexeddb-export-import';
-import dump from './dump.json';
 import countries from './countries.json';
+import dump from './dump.json';
 
 class DemoDatabase extends Dexie {
   static async fill(db: IDBDatabase): Promise<void> {
@@ -19,6 +19,10 @@ class DemoDatabase extends Dexie {
 
   cartTemplates: Dexie.Table<any, number>;
 
+  cartIncludeTemplates: Dexie.Table<any, number>;
+
+  checkoutTemplates: Dexie.Table<any, number>;
+
   customerAddresses: Dexie.Table<any, number>;
 
   customerAttributes: Dexie.Table<any, number>;
@@ -34,6 +38,8 @@ class DemoDatabase extends Dexie {
   items: Dexie.Table<any, number>;
 
   paymentMethods: Dexie.Table<any, number>;
+
+  receiptTemplates: Dexie.Table<any, number>;
 
   stores: Dexie.Table<any, number>;
 
@@ -53,8 +59,10 @@ class DemoDatabase extends Dexie {
     super('foxy_demo_db');
 
     this.version(5).stores({
-      carts: '++id',
+      cart_include_templates: '++id,store',
       cart_templates: '++id,store',
+      carts: '++id',
+      checkout_templates: '++id,store',
       customer_addresses: '++id,customer',
       customer_attributes: '++id,customer',
       customer_portal_settings: 'store',
@@ -63,32 +71,36 @@ class DemoDatabase extends Dexie {
       error_entries: '++id',
       items: '++id,cart,transaction',
       payment_methods: '++id,customer',
+      receipt_templates: '++id,store',
       stores: '++id',
       subscriptions: '++id,store,customer',
-      template_config: '++id',
       taxes: '++id,store',
+      template_config: '++id',
       transactions: '++id,store,customer,subscription',
       users: '++id,store',
     });
 
-    this.carts = this.table('carts');
+    this.cartIncludeTemplates = this.table('cart_include_templates');
     this.cartTemplates = this.table('cart_templates');
+    this.carts = this.table('carts');
+    this.checkoutTemplates = this.table('checkout_templates');
+    this.countries = countries.values;
     this.customerAddresses = this.table('customer_addresses');
     this.customerAttributes = this.table('customer_attributes');
     this.customerPortalSettings = this.table('customer_portal_settings');
     this.customers = this.table('customers');
     this.emailTemplates = this.table('email_templates');
     this.errorEntries = this.table('error_entries');
+    this.errorEntries = this.table('error_entries');
     this.items = this.table('items');
     this.paymentMethods = this.table('payment_methods');
+    this.receiptTemplates = this.table('receipt_templates');
     this.stores = this.table('stores');
     this.subscriptions = this.table('subscriptions');
+    this.taxes = this.table('taxes');
     this.templateConfig = this.table('template_config');
     this.transactions = this.table('transactions');
-    this.errorEntries = this.table('error_entries');
-    this.taxes = this.table('taxes');
     this.users = this.table('users');
-    this.countries = countries.values;
   }
 }
 
