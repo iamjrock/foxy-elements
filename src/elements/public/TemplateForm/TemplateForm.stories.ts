@@ -5,12 +5,15 @@ import { getMeta } from '../../../storygen/getMeta';
 import { getStory } from '../../../storygen/getStory';
 
 /**
- * @param templateType
+ * Creates the summary dinamicatly based on the teplate type.
+ *
+ * @param templateType the string corresponding to the template resource.
+ * @returns the summary to use to create the story.
  */
-function createConfig(templateType: string) {
+function createConfig(templateType: string): Summary {
   const summary: Summary = {
     configurable: {},
-    href: 'https://demo.foxycart.com/s/admin/cart_templates/0',
+    href: 'https://demo.foxycart.com/s/admin/template/cart_templates/0',
     localName: 'foxy-template-form',
     nucleon: true,
     parent: 'https://demo.foxycart.com/s/admin/stores/0/cart_templates',

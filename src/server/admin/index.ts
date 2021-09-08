@@ -598,7 +598,7 @@ router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);
 });
 
-router.get('/s/admin/stores/:id/:template_type', async ({ params, request }) => {
+router.get('/s/admin/stores/template/:template_type/:id', async ({ params, request }) => {
   const tplDict: Record<string, Dexie.Table> = {
     cart_include_templates: db.cartIncludeTemplates,
     cart_templates: db.cartTemplates,
