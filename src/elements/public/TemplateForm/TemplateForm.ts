@@ -137,10 +137,12 @@ export class TemplateForm extends Base<Item> {
                   data-testclass="i18n"
                   slot="tab-${index}"
                   lang="${this.lang}"
-                  key="${tab}-version"
+                  key="email.${tab}-version"
                   ns="${this.ns}"
                 ></foxy-i18n>
-                <div class="pt-s" slot="panel-${index}">${this.__renderForm(tab)}</div>
+                <div class="pt-s" slot="panel-${index}">
+                  ${this.__renderForm(tab as 'html' | 'text')}
+                </div>
               `
             )}
           </x-tabs>
