@@ -4,6 +4,7 @@ import {
   CartTemplateItem,
   CheckoutTemplateItem,
   CustomerEmailTemplateItem,
+  EmailTemplateItem,
 } from './types';
 import { CSSResultArray, PropertyDeclarations, TemplateResult, css, html } from 'lit-element';
 import { Checkbox, Choice, Group, PropertyTable } from '../../private/index';
@@ -29,7 +30,8 @@ type Item =
   | CartIncludeTemplateItem
   | CartTemplateItem
   | CheckoutTemplateItem
-  | CustomerEmailTemplateItem;
+  | CustomerEmailTemplateItem
+  | EmailTemplateItem;
 
 export class TemplateForm extends Base<Item> {
   static get styles(): CSSResultArray {
@@ -71,20 +73,25 @@ export class TemplateForm extends Base<Item> {
   }
 
   static get v8n(): NucleonV8N<Item> {
+    const url_fields = {
+      content_html_url: 300,
+      content_text_url: 300,
+      content_url: 300,
+    };
+    type UrlField = keyof typeof url_fields;
     return [
-      ({ description: v }) => !v || v.length <= 100 || 'first_name_too_long',
-      item => {
-        const v = (item as CartTemplateItem).content;
-        return !v || v.length <= 50 || 'content_invalid';
-      },
-      item => {
-        const v = (item as CartTemplateItem).content_url;
-        return !v || (v && v.length <= 300) || 'content_url_invalid';
-      },
-      item => {
-        const v = (item as CartTemplateItem).content_url;
-        return !v || TemplateForm.__isValidUrl(v) || 'content_url_invalid';
-      },
+      ...Object.keys(url_fields).map(
+        (field: string) => (item: Partial<EmailTemplateItem & CartTemplateItem>) => {
+          const v = item[field as unknown as UrlField];
+          return !v || v.length <= url_fields[field as UrlField] || `${field}_invalid`;
+        }
+      ),
+      ...Object.keys(url_fields).map(
+        (field: string) => (item: Partial<EmailTemplateItem & CartTemplateItem>) => {
+          const v = item[field as unknown as UrlField];
+          return !v || TemplateForm.__isValidUrl(v) || `${field}_invalid`;
+        }
+      ),
     ];
   }
 
