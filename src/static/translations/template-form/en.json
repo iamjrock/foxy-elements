@@ -11,7 +11,7 @@
       "email": {
             "html-version": "HTML version",
             "subject": "Subject",
-            "text-fallback": "Text fallback"
+            "text-version": "Text fallback"
       },
       "update": "Update",
       "template-type": {
