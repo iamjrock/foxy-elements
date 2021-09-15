@@ -223,7 +223,7 @@ export class TemplateForm extends Base<Item> {
             <vaadin-text-field
               class="mr-s flex-grow"
               value=${ifDefined((this.form as any)[urlField])}
-              data-testid="content_url"
+              data-testid="${urlField}"
               @input=${this.__bindField(urlField as any)}
               error-message=${this.__getErrorMessage(urlField)}
               >
