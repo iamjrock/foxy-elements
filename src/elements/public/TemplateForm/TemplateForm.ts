@@ -78,13 +78,15 @@ export class TemplateForm extends Base<Item> {
       content_url: 300,
     };
     type UrlField = keyof typeof url_fields;
-    return [
+    const rules = [
+      // url fields must not exceed 300
       ...Object.keys(url_fields).map(
         (field: string) => (item: Partial<EmailTemplateItem & CartTemplateItem>) => {
           const v = item[field as unknown as UrlField];
-          return !v || v.length <= url_fields[field as UrlField] || `${field}_invalid`;
+          return !v || v.length <= url_fields[field as UrlField] || `${field}_too_long`;
         }
       ),
+      // url fields must be URLs
       ...Object.keys(url_fields).map(
         (field: string) => (item: Partial<EmailTemplateItem & CartTemplateItem>) => {
           const v = item[field as unknown as UrlField];
@@ -92,6 +94,7 @@ export class TemplateForm extends Base<Item> {
         }
       ),
     ];
+    return rules;
   }
 
   private __isEmail = false;
