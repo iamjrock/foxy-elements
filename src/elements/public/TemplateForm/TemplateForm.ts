@@ -25,13 +25,12 @@ const Base = ScopedElementsMixin(
   ThemeableMixin(ConfigurableMixin(TranslatableMixin(NucleonElement, NS)))
 );
 
-type Item =
-  | AdminEmailTemplateItem
-  | CartIncludeTemplateItem
-  | CartTemplateItem
-  | CheckoutTemplateItem
-  | CustomerEmailTemplateItem
-  | EmailTemplateItem;
+type Item = AdminEmailTemplateItem &
+  CartIncludeTemplateItem &
+  CartTemplateItem &
+  CheckoutTemplateItem &
+  CustomerEmailTemplateItem &
+  EmailTemplateItem;
 
 export class TemplateForm extends Base<Item> {
   static get styles(): CSSResultArray {
