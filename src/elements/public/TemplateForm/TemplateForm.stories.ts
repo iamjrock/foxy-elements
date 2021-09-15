@@ -13,15 +13,13 @@ import { getStory } from '../../../storygen/getStory';
 function createConfig(templateType: string): Summary {
   const summary: Summary = {
     configurable: {},
-    href: 'https://demo.foxycart.com/s/admin/template/cart_templates/0',
+    href: 'https://demo.foxycart.com/s/admin/template/_____/0',
     localName: 'foxy-template-form',
     nucleon: true,
-    parent: 'https://demo.foxycart.com/s/admin/stores/0/cart_templates',
     translatable: true,
   };
-  const newHref = summary.href!.replace('cart_templates', templateType);
-  const newParent = summary.parent!.replace('cart_templates', templateType);
-  return { ...summary, href: newHref, parent: newParent };
+  const newHref = summary.href!.replace('_____', templateType);
+  return { ...summary, href: newHref };
 }
 
 export default getMeta(createConfig('cart_templates'));
