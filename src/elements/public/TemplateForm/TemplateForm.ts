@@ -180,42 +180,71 @@ export class TemplateForm extends Base<Item> {
         ns=${this.ns}
         id="confirm-cache"
         @hide=${this.__handleConfirmCache}
-        >
+      >
       </foxy-internal-confirm-dialog>
-      ${
-        ifDefined(this.form.description)
-          ? html`
-              <vaadin-text-field
-                class="w-full mb-s"
-                label="${this.t('description.label')}"
-                value=${this.form.description}
-                readonly
-              >
-              </vaadin-text-field>
-            `
-          : ''
-      }
-      ${
-        this.__isEmail
-          ? html`
-              <vaadin-text-field class="w-full mb-s" label="${this.t('email.subject')}">
-              </vaadin-text-field>
-            `
-          : ``
-      }
+      ${ifDefined(this.form.description)
+        ? html`
+            <vaadin-text-field
+              class="w-full mb-s"
+              label="${this.t('description.label')}"
+              value=${this.form?.description}
+              readonly
+            >
+            </vaadin-text-field>
+          `
+        : ''}
+      ${this.__isEmail
+        ? html`
+            <vaadin-text-field
+              class="w-full mb-s"
+              data-testid="subject"
+              value=${ifDefined((this.form as any)['subject'])}
+              @input=${this.__bindField('subject')}
+              label="${this.t('email.subject')}"
+            >
+            </vaadin-text-field>
+          `
+        : ``}
+      ${this.__renderChoices(contentType, urlField, contentField)}
+      <x-property-table
+        class="mb-xl"
+        .items=${(['date_modified', 'date_created'] as const).map(field => ({
+          name: this.t(field),
+          value: this.data
+            ? html`
+                <foxy-i18n key="date" options='{"value": "${this.data![field]}"}'></foxy-i18n>
+                <foxy-i18n key="time" options='{"value": "${this.data![field]}"}'></foxy-i18n>
+              `
+            : '',
+        }))}
+      ></x-property-table>
+      <vaadin-button
+        data-testid="action"
+        theme=${this.in('idle') ? `primary ${this.href ? 'error' : 'success'}` : ''}
+        class="w-full"
+        ?disabled=${!this.errors.length}
+        @click=${this.__handleActionSubmit}
+      >
+        <foxy-i18n lang=${this.lang} key="update" ns=${this.ns}> </foxy-i18n>
+      </vaadin-button>
+    `;
+  }
+
+  private __renderChoices(
+    contentType: string,
+    urlField: string,
+    contentField: string
+  ): TemplateResult {
+    return html`
       <x-choice
-        data-testid="template-type"
+        data-testid="template-type${this.__isEmail ? '-' + contentType : ''}"
         class="w-full py-m"
         ?readonly=${this.readonly}
         vertical-align="top"
         .items=${['default', 'url', 'clipboard']}
         @change=${(ev: CustomEvent) => this._setCustomizeState(ev)}
-        .getText=${(v: string) => html`
-          <div class="flex flex-col justify-start my-s">
-            <div class="w-full">${this.t(`template-type.label-${v}`)}</div>
-            <div class="w-full text-s">${this.t(`template-type.description-${v}`)}</div>
-          </div>
-        `}
+        error-message=${this.__getErrorMessage(urlField)}
+        .getText=${this.__optionTextFormatted.bind(this)}
         >
         <foxy-i18n key="customize-template" lang=${this.lang} ns=${this.ns}></foxy-i18n>
         <div slot="url-conditional">
@@ -225,7 +254,6 @@ export class TemplateForm extends Base<Item> {
               value=${ifDefined((this.form as any)[urlField])}
               data-testid="${urlField}"
               @input=${this.__bindField(urlField as any)}
-              error-message=${this.__getErrorMessage(urlField)}
               >
             </vaadin-text-field>
             <vaadin-button 
@@ -270,27 +298,15 @@ export class TemplateForm extends Base<Item> {
           </vaadin-text-area>
         </div>
       </x-choice>
-      <x-property-table class="mb-xl"
-        .items=${(['date_modified', 'date_created'] as const).map(field => ({
-          name: this.t(field),
-          value: this.data
-            ? html`
-                <foxy-i18n key="date" options='{"value": "${this.data![field]}"}'></foxy-i18n>
-                <foxy-i18n key="time" options='{"value": "${this.data![field]}"}'></foxy-i18n>
-              `
-            : '',
-        }))}
-                       >
-      </x-property-table>
-      <vaadin-button
-        data-testid="action"
-        theme=${this.in('idle') ? `primary ${this.href ? 'error' : 'success'}` : ''}
-        class="w-full"
-        ?disabled=${!this.errors.length}
-        @click=${this.__handleActionSubmit}
-        >
-        <foxy-i18n lang=${this.lang} key="update" ns=${this.ns}> </foxy-i18n>
-      </vaadin-button>
+    `;
+  }
+
+  private __optionTextFormatted(text: string): TemplateResult {
+    return html`
+      <div class="flex flex-col justify-start my-s">
+        <div class="w-full">${this.t(`template-type.label-${text}`)}</div>
+        <div class="w-full text-s">${this.t(`template-type.description-${text}`)}</div>
+      </div>
     `;
   }
 
