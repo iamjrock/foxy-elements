@@ -602,7 +602,7 @@ router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);
 });
 
-router.get('/s/admin/stores/template/:template_type/:id', async ({ params, request }) => {
+router.get('/s/admin/template/:template_type/:id', async ({ params, request }) => {
   const tplDict: Record<string, Dexie.Table> = {
     cart_include_templates: db.cartIncludeTemplates,
     cart_templates: db.cartTemplates,
@@ -614,11 +614,10 @@ router.get('/s/admin/stores/template/:template_type/:id', async ({ params, reque
   if (tplDatabase === null) {
     return new Response(null, { status: 404 });
   }
-  return respondItems(
-    db.cartTemplates,
-    createTemplateComposeFunction(params.template_type),
-    request.url,
-    `fx:${params.template_type}`
+  return respondItemById(
+    tplDatabase,
+    parseInt(params.id),
+    createTemplateComposeFunction(params.template_type)
   );
 });
 
