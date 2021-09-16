@@ -292,7 +292,7 @@ export class TemplateForm extends Base<Item> {
         <div slot="clipboard-conditional">
           <vaadin-text-area
             id="cached-content"
-            data-testid="content"
+            data-testid="${contentField}"
             class="w-full"
             label="${this.t('content')}"
             value=${ifDefined((this.form as any)[contentField])}
