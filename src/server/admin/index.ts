@@ -621,7 +621,7 @@ router.get('/s/admin/template/:template_type/:id', async ({ params, request }) =
   );
 });
 
-router.post('/s/admin/:template_type/:id/cache', async () => {
+router.post('/s/admin/template/:template_type/:id/cache', async () => {
   return new Response(JSON.stringify(composeTemplateCache()));
 });
 
