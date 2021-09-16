@@ -16,23 +16,6 @@ describe('Input Validation', function () {
     rule: string;
   }
 
-  it('Validates long url fields in email', async function () {
-    const el: TemplateForm = await fixture(html`
-      <foxy-template-form
-        @fetch=${(evt: FetchEvent) => router.handleEvent(evt)}
-        href="${emailTemplateUrl}"
-      >
-      </foxy-template-form>
-    `);
-    await waitUntil(() => el.in('idle'), 'Element should become idle');
-    el.edit({ content_text_url: `http://demo.${Array(300).join('a')}.com/my_template` });
-    await elementUpdated(el);
-    const choice = el.shadowRoot?.querySelector(`[data-testid="template-type-text"]`);
-    expect(choice, `testid template-type-text does not exist.`).to.exist;
-    const error = choice?.getAttribute('error-message');
-    expect(error).to.equal('v8n_too_long');
-  });
-
   /**
    * Creates an object to edit the elements form, triggering field to enter
    * invalid state due to its length.
