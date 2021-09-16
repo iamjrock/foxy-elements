@@ -132,7 +132,7 @@ export class TemplateForm extends Base<Item> {
   render(): TemplateResult {
     return html`${this.__isEmail
       ? html`
-          <x-tabs size="2">
+          <x-tabs size="2" data-testid="tabs">
             ${['html', 'text'].map(
               (tab, index) => html`
                 <foxy-i18n
@@ -231,7 +231,7 @@ export class TemplateForm extends Base<Item> {
   }
 
   private __renderChoices(
-    contentType: string,
+    contentType: 'html' | 'text',
     urlField: string,
     contentField: string
   ): TemplateResult {
