@@ -141,6 +141,7 @@ export class TemplateConfigForm extends Base<Item> {
     tabs.push({ title: 'your-website', content: this.__renderYourWebsite() });
     tabs.push({ title: 'cart', content: this.__renderCart() });
     tabs.push({ title: 'checkout', content: this.__renderCheckout() });
+    tabs.push({ title: 'advanced', content: this.__renderAdvanced() });
     return html` ${tabs.length === 0 ? '' : this.__renderTabs(tabs)} `;
   }
 
@@ -156,153 +157,190 @@ export class TemplateConfigForm extends Base<Item> {
   }
 
   private __renderTabs(tabs: Array<Tab>): TemplateResult {
-    return html` ${this.__stringifying}
-      <div class="pt-m">
-        <x-tabs size="${tabs.length}">
-          ${tabs.map(
-            (tab, index) => html`
-              <foxy-i18n
-                data-testclass="i18n"
-                slot="tab-${index}"
-                lang="${this.lang}"
-                key="${tab.title}"
-                ns="${this.ns}"
-              ></foxy-i18n>
-              <div slot="panel-${index}">${tab.content}</div>
-            `
-          )}
-        </x-tabs>
-      </div>`;
+    return html` <div class="pt-m">
+      <x-tabs size="${tabs.length}">
+        ${tabs.map(
+          (tab, index) => html`
+            <foxy-i18n
+              data-testclass="i18n"
+              slot="tab-${index}"
+              lang="${this.lang}"
+              key="${tab.title}"
+              ns="${this.ns}"
+            ></foxy-i18n>
+            <div class="pt-s" slot="panel-${index}">${tab.content}</div>
+          `
+        )}
+      </x-tabs>
+      <vaadin-button
+        data-testid="action"
+        theme=${this.in('idle') ? `primary ${this.href ? 'error' : 'success'}` : ''}
+        class="w-full mt-m"
+        ?disabled=${!this.errors.length}
+        @click=${this.__handleActionSubmit}
+      >
+        <foxy-i18n lang=${this.lang} key="update" ns=${this.ns}> </foxy-i18n>
+      </vaadin-button>
+    </div>`;
   }
 
   private __renderYourWebsite() {
-    return html`
-      ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()}
-      ${this.__renderYourWebsiteCustomVariables()}
-    `;
+    return html` ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()} `;
   }
 
   private __renderCart() {
     return html` ${this.__renderCartType()} ${this.__renderCartConfig()} `;
   }
 
+  private __renderAdvanced() {
+    return html`
+      ${this.__renderYourWebsiteCustomVariables()} ${this.__renderCartConfigHeaderFooter()}
+    `;
+  }
+
   private __renderCheckout() {
     return html`
-      <x-group>
+      ${this.__renderCombo(
+        'checkout_type.title',
+        [
+          'checkout_type.default_account',
+          'checkout_type.account_only',
+          'checkout_type.default_guest',
+          'checkout_type.guest_only',
+        ],
+        'checkout_type.default_account'
+      )}
+      <x-group frame class="mt-m">
+        <foxy-i18n
+          slot="header"
+          class="mx-s"
+          key="tos_checkbox_settings.title"
+          lang=${this.lang}
+          ns=${this.ns}
+        >
+        </foxy-i18n>
         <div class="p-m">
-          ${['header', 'footer', 'checkout_fields', 'multiship_checkout_fields'].map(
-            e => html` <vaadin-text-area label="custom_script_values-${e}"> </vaadin-text-area> `
+          <vaadin-combo-box
+            class="w-full mt-s"
+            label=${this.t('tos_checkbox_settings.label')}
+            value=${this.__getTosCheckboxSettingsOptionValue()}
+            .items=${this.__translatedItems([
+              'disabled',
+              'optional-default-checked',
+              'optional-default-checked-hidden',
+              'optional-default-unchecked',
+              'optional-default-unchecked-hidden',
+              'required-default-checked',
+              'required-default-checked-hidden',
+              'required-default-unchecked',
+              'required-default-unchecked-hidden',
+            ])}
+          ></vaadin-combo-box>
+          <vaadin-text-field
+            ?disabled=${this.__getTosCheckboxSettingsOptionValue() == 'disabled'}
+            class="w-full mt-m"
+            label="tos_checkbox_settings-url"
+          >
+          </vaadin-text-field>
+        </div>
+      </x-group>
+      <x-group frame>
+        <div class="p-m">
+          ${this.__renderUsageCheckbox(
+            ['custom_checkout_field_requirements', 'cart_controls'],
+            ['enabled', 'disabled']
           )}
+          ${this.__renderUsageCheckbox(
+            ['custom_checkout_field_requirements', 'coupon_entry'],
+            ['enabled', 'disabled']
+          )}
+          ${this.__renderUsageCheckbox(['eu_secure_data_transfer_consent', 'usage'])}
+          ${this.__renderUsageCheckbox(['newsletter_subscribe', 'usage'])}
         </div>
       </x-group>
-      ${this.__renderCombo('checkout_type', [
-        'default_account',
-        'default_guest',
-        'guest_only',
-        'account_only',
-      ])}
-      <x-group frame>
+      <x-group class="mt-m" frame>
+        <foxy-i18n
+          slot="header"
+          class="mx-s"
+          key="creditcard_config.title"
+          lang=${this.lang}
+          ns=${this.ns}
+        >
+        </foxy-i18n>
         <div class="p-m">
-          <vaadin-combo-box
-            label="tos_checkbox_settings-usage"
-            value=${this.__getJsonAttribute('tos_checkbox_settings-usage') ?? ''}
-            .items=${['none', 'required', 'optional']}
-          ></vaadin-combo-box>
-          <vaadin-list-box label="tos_checkbox_settings-initial_state" theme="horizontal">
-            <vaadin-item value="checked">
-              <foxy-i18n key="checked"></foxy-i18n>
-            </vaadin-item>
-            <vaadin-item value="unchecked">
-              <foxy-i18n key="unchecked"></foxy-i18n>
-            </vaadin-item>
+          <vaadin-list-box
+            label="support_payment_cards.usage"
+            value=${this.__getJsonAttribute('use_checkout_confirmation_window-usage') ?? ''}
+            multiple
+          >
+            ${['visa', 'mastercard', 'discover', 'amex', 'dinersclub', 'maestro', 'laser'].map(
+              card => html`
+                <vaadin-item name="${card}">
+                  <foxy-i18n
+                    key="support_payment_cards.${card}"
+                    ns=${this.ns}
+                    lang=${this.lang}
+                  ></foxy-i18n>
+                </vaadin-item>
+              `
+            )}
           </vaadin-list-box>
-          <x-checkbox>
-            <foxy-i18n
-              key="tos_checkbox_settings-is_hidden"
-              lang=${this.lang}
-              ns=${this.ns}
-            ></foxy-i18n>
-          </x-checkbox>
-          <vaadin-text-field label="tos_checkbox_settings-url"> </vaadin-text-field>
+        </div>
+        <div class="m-s">
+          ${this.__renderCombo('csc_requirements.title', [
+            'csc_requirements.all_cards',
+            'csc_requirements.sso_only',
+            'csc_requirements.new_cards_only',
+          ])}
         </div>
       </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="eu_secure_data_transfer_consent-usage"
-            value=${this.__getJsonAttribute('eu_secure_data_transfer_consent-usage') ?? ''}
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
-        </div>
-      </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="newsletter_subscribe-usage"
-            value=${this.__getJsonAttribute('newsletter_subscribe-usage') ?? ''}
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
-        </div>
-      </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="support_payment_cards-usage"
-            value=${this.__getJsonAttribute('use_checkout_confirmation_window-usage') ?? ''}
-            .items=${['visa', 'mastercard', 'discover', 'amex', 'dinersclub', 'maestro', 'laser']}
-          ></vaadin-combo-box>
-        </div>
-      </x-group>
-      ${this.__renderCombo('csc_requirements', ['all_cards', 'sso_only', 'new_cards_only'])}
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="colors-usage"
-            value=${this.__getJsonAttribute('newsletter_subscribe-usage') ?? ''}
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
-          <vaadin-text-field label="colors-primary"> </vaadin-text-field>
-          <vaadin-text-field label="colors-secondary"> </vaadin-text-field>
-          <vaadin-text-field label="colors-tertiary"> </vaadin-text-field>
-        </div>
-      </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="use_checkout_confirmation_window-usage"
-            value=${this.__getJsonAttribute('use_checkout_confirmation_window-usage') ?? ''}
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
-        </div>
-      </x-group>
-      <x-group frame>
-        <div class="p-m">
-          <vaadin-combo-box
-            label="custom_checkout_field_requirements-cart_controls"
-            value=${this.__getJsonAttribute('custom_checkout_field_requirements-cart_controls') ??
-            ''}
-            .items=${['enabled', 'disabled']}
-          ></vaadin-combo-box>
-          <vaadin-combo-box
-            label="custom_checkout_field_requirements-coupon_entry"
-            value=${this.__getJsonAttribute('custom_checkout_field_requirements-coupon_entry') ??
-            ''}
-            .items=${['enabled', 'disabled']}
-          ></vaadin-combo-box>
-        </div>
-        ${[
-          'first_name',
-          'last_name',
-          'company',
-          'tax_id',
-          'phone',
-          'address1',
-          'address2',
-          'city',
-          'region',
-          'postal_code',
-          'country',
-        ].map(i => this.__renderBillingField(`custom_checkout_field_requirements-billing_${i}`))}
+      <x-group class="mt-m" frame>
+        <foxy-i18n
+          slot="header"
+          class="mx-s"
+          key="custom_checkout_field_requirements.title"
+          lang=${this.lang}
+          ns=${this.ns}
+        >
+        </foxy-i18n>
+        <x-group class="mt-m">
+          <foxy-i18n
+            slot="header"
+            class="mx-s"
+            key="custom_checkout_field_requirements.title-billing-shipping"
+            lang=${this.lang}
+            ns=${this.ns}
+          >
+          </foxy-i18n>
+          <div class="p-s grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-s md:gap-m">
+            ${['company', 'tax_id', 'phone', 'address2'].map(i =>
+              this.__renderBillingField(`custom_checkout_field_requirements.billing_${i}`)
+            )}
+          </div>
+        </x-group>
+        <x-group class="mt-m">
+          <foxy-i18n
+            slot="header"
+            class="mx-s"
+            key="custom_checkout_field_requirements.title-billing"
+            lang=${this.lang}
+            ns=${this.ns}
+          >
+          </foxy-i18n>
+          <div class="p-s grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-s md:gap-m">
+            ${[
+              'first_name',
+              'last_name',
+              'address1',
+              'city',
+              'region',
+              'postal_code',
+              'country',
+            ].map(i =>
+              this.__renderBillingField(`custom_checkout_field_requirements.billing_${i}`)
+            )}
+          </div>
+        </x-group>
       </x-group>
     `;
   }
@@ -368,7 +406,14 @@ export class TemplateConfigForm extends Base<Item> {
   private __renderCartConfig() {
     const cartDisplayConfig =
       this.__getJsonAttribute(['cart_display_config', 'usage']) === 'required';
-    return html` <x-group frame>
+    return html`
+      <x-group frame class="mt-m">
+        <foxy-i18n
+          slot="header"
+          key="cart_display.title"
+          lang="${this.lang}"
+          ns="${this.ns}"
+        ></foxy-i18n>
         <div class="p-m">
           <x-checkbox
             ?checked=${cartDisplayConfig}
@@ -414,16 +459,16 @@ export class TemplateConfigForm extends Base<Item> {
           ${this.__renderCartConfigHiddenOptions()}
         </div>
       </x-group>
-      ${this.__renderCartConfigHeaderFooter()} ${this.__renderCartConfigFoxyComplete()}
-      ${this.__renderCartFilter()}
-      <x-group frame>
+      ${this.__renderCartConfigFoxyComplete()} ${this.__renderCartFilter()}
+      <x-group class="mt-m" frame>
+        <foxy-i18n slot="header" key="colors.title" lang=${this.lang} ns=${this.ns}></foxy-i18n>
         <div class="p-m">
-          <vaadin-combo-box
-            label="postalcode_lookup"
-            .items=${['none', 'required']}
-          ></vaadin-combo-box>
+          ${this.__renderTextField(['colors', 'primary'])}
+          ${this.__renderTextField(['colors', 'secondary'])}
+          ${this.__renderTextField(['colors', 'tertiary'])}
         </div>
-      </x-group>`;
+      </x-group>
+    `;
   }
 
   private __renderCartFilter() {
@@ -578,7 +623,7 @@ export class TemplateConfigForm extends Base<Item> {
         ns=${this.ns}
       ></foxy-i18n>
       <div class="p-s">
-        ${['header', 'footer' /*, 'checkout_fields', 'multiship_checkout_fields'*/].map(e =>
+        ${['header', 'footer', 'checkout_fields', 'multiship_checkout_fields'].map(e =>
           this.__renderTextAreaField(['custom_script_values', e])
         )}
       </div>
@@ -619,6 +664,11 @@ export class TemplateConfigForm extends Base<Item> {
               ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
             </div>
           </div>
+        </div>
+        <div class="p-m">
+          <x-checkbox class="py-s" @change=${this.__handleChangeEnablePostalCode.bind(this)}>
+            <foxy-i18n ns=${this.ns} key="postal_code_lookup.enable"></foxy-i18n>
+          </x-checkbox>
         </div>
       </x-group>
     `;
@@ -699,12 +749,28 @@ export class TemplateConfigForm extends Base<Item> {
     `;
   }
 
-  private __renderCombo(attribute: string | Array<string>, items: string[]): TemplateResult {
+  private __renderUsageCheckbox(attribute: string | string[], yesNo = ['required', 'none']) {
+    const label = typeof attribute == 'string' ? attribute : attribute.join('.');
+    return html`
+      <x-checkbox
+        ?checked=${this.__getEnable(attribute, yesNo)}
+        @change=${this.__handleChangeEnable(attribute, yesNo)}
+      >
+        <foxy-i18n class="mx-s" key="${label}" lang=${this.lang} ns=${this.ns}></foxy-i18n>
+      </x-checkbox>
+    `;
+  }
+
+  private __renderCombo(
+    attribute: string | Array<string>,
+    items: string[],
+    defaultValue = ''
+  ): TemplateResult {
     const label = typeof attribute == 'string' ? attribute : attribute.join('.');
     return html`<vaadin-combo-box
       class="w-full mt-s"
       label=${this.t(label)}
-      value=${this.__getJsonAttribute(attribute) ?? ''}
+      value=${this.__getJsonAttribute(attribute) ?? defaultValue}
       .items=${this.__translatedItems(items)}
     ></vaadin-combo-box>`;
   }
@@ -752,9 +818,10 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderBillingField(field: string): TemplateResult {
     return html` <vaadin-combo-box
-      label=${field}
+      label=${this.t(field)}
       value=${this.__getJsonAttribute(field) ?? ''}
       .items=${['required', 'option', 'hidden', 'default']}
+      .getText=${(v: string) => this.t(v)}
     ></vaadin-combo-box>`;
   }
 
@@ -816,6 +883,10 @@ export class TemplateConfigForm extends Base<Item> {
     }
   }
 
+  private __handleChangeEnablePostalCode(ev: CustomEvent): void {
+    this.__setJsonAttribute(['postal_code_loockup', 'usage'], ev.detail ? 'enabled' : 'none');
+  }
+
   private __getJsonAttribute(attribute: string | Array<string>): any {
     this.__deStringify();
     if (!this.__json) {
@@ -846,11 +917,13 @@ export class TemplateConfigForm extends Base<Item> {
   }
 
   private __deepSet(obj: Record<string, any>, keyList: string[], value: any) {
-    let cursor = obj;
-    for (let k = 0; k < keyList.length - 1; k++) {
-      cursor = cursor[keyList[k]];
+    if (obj) {
+      let cursor = obj;
+      for (let k = 0; k < keyList.length - 1; k++) {
+        cursor = cursor[keyList[k]];
+      }
+      cursor[keyList[keyList.length - 1]] = value;
     }
-    cursor[keyList[keyList.length - 1]] = value;
   }
 
   private __deStringify() {
@@ -864,5 +937,42 @@ export class TemplateConfigForm extends Base<Item> {
   private async __stringify() {
     this.form.json = JSON.stringify(this.__json);
     return true;
+  }
+
+  private __getTosCheckboxSettingsOptionValue() {
+    return 'disabled';
+  }
+
+  /**
+   * Retrieves a string value that can only be 'usage' or 'required' as a
+   * boolean.
+   *
+   * @param attribute from this.__json that should only accept "required" or
+   * "none" as values.
+   * @param yesNo an array with two values, corresponding to the required and
+   * none.
+   * @returns enabled
+   */
+  private __getEnable(attribute: string | Array<string>, yesNo = ['required', 'none']): boolean {
+    const value = this.__getJsonAttribute(attribute);
+    return value == yesNo[0];
+  }
+
+  /**
+   * Returns a functios that sets a value for an attribute in this__json that
+   * can only be 'usage' or 'required', given an event that contains a boolean
+   * detail.
+   *
+   * @param attribute from this.__json that should only accept "required" or
+   * "none" as values.
+   * @param yesNo an array with two values, corresponding to the required and
+   * none.
+   * @returns enabled
+   */
+  private __handleChangeEnable(attribute: string | Array<string>, yesNo = ['required', 'none']) {
+    return (ev: CustomEvent) => {
+      const value = ev.detail ? yesNo[0] : yesNo[1];
+      this.__setJsonAttribute(attribute, value);
+    };
   }
 }
