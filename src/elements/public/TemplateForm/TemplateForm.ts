@@ -108,9 +108,11 @@ export class TemplateForm extends Base<Item> {
   });
 
   private __bindField = memoize((key: keyof Item) => {
+    const edit = { [key]: '' };
     return (evt: CustomEvent) => {
       const target = evt.target as HTMLInputElement;
-      this.edit({ [key]: target.value });
+      edit[key] = target.value;
+      this.edit(edit);
     };
   });
 
