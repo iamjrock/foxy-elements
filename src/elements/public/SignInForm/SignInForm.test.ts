@@ -73,8 +73,8 @@ describe('SignInForm', () => {
       const submit = stub(element, 'submit');
 
       element.edit({
-        type: 'password',
         credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+        type: 'password',
       });
 
       control!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
@@ -251,8 +251,8 @@ describe('SignInForm', () => {
       const submit = stub(element, 'submit');
 
       element.edit({
-        type: 'password',
         credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+        type: 'password',
       });
 
       control!.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
@@ -389,7 +389,7 @@ describe('SignInForm', () => {
     it('is visible if form.credential.new_password exists', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.exist;
     });
@@ -407,8 +407,8 @@ describe('SignInForm', () => {
         );
 
         element.edit({
-          type: 'password',
           credential: { email: 'foo@example.com', password: 'bar' },
+          type: 'password',
         });
 
         element.submit();
@@ -427,7 +427,7 @@ describe('SignInForm', () => {
     it('is hidden when the form is hidden', async () => {
       const layout = html`<foxy-sign-in-form hidden></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.not.exist;
     });
@@ -435,7 +435,7 @@ describe('SignInForm', () => {
     it('is hidden when hiddencontrols matches "new-password"', async () => {
       const layout = html`<foxy-sign-in-form hiddencontrols="new-password"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.not.exist;
     });
@@ -443,7 +443,7 @@ describe('SignInForm', () => {
     it('is editable by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).not.to.have.attribute('readonly');
     });
@@ -451,7 +451,7 @@ describe('SignInForm', () => {
     it('is readonly when the form is readonly', async () => {
       const layout = html`<foxy-sign-in-form readonly></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.have.attribute('readonly');
     });
@@ -459,7 +459,7 @@ describe('SignInForm', () => {
     it('is readonly when readonlycontrols matches "new-password"', async () => {
       const layout = html`<foxy-sign-in-form readonlycontrols="new-password"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.have.attribute('readonly');
     });
@@ -467,7 +467,7 @@ describe('SignInForm', () => {
     it('is interactive by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).not.to.have.attribute('disabled');
     });
@@ -475,7 +475,7 @@ describe('SignInForm', () => {
     it('is disabled when the form is disabled', async () => {
       const layout = html`<foxy-sign-in-form disabled></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.have.attribute('disabled');
     });
@@ -483,7 +483,7 @@ describe('SignInForm', () => {
     it('is disabled when disabledcontrols matches "new-password"', async () => {
       const layout = html`<foxy-sign-in-form disabledcontrols="new-password"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.have.attribute('disabled');
     });
@@ -491,7 +491,7 @@ describe('SignInForm', () => {
     it('has the value of form.credential.new_password', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: 'Test' } });
+      element.edit({ credential: { email: '', new_password: 'Test', password: '' } });
 
       expect(await getByTestId(element, 'new-password')).to.have.property('value', 'Test');
     });
@@ -500,7 +500,7 @@ describe('SignInForm', () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
 
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
       const field = (await getByTestId(element, 'new-password')) as PasswordFieldElement;
       field.value = 'Test';
       field.dispatchEvent(new CustomEvent('input'));
@@ -513,8 +513,8 @@ describe('SignInForm', () => {
       const element = await fixture<SignInForm>(layout);
 
       element.edit({
+        credential: { email: 'foo@example.com', new_password: '', password: 'bar' },
         type: 'password',
-        credential: { email: 'foo@example.com', password: 'bar', new_password: '' },
       });
 
       expect(element.in({ idle: { template: { dirty: 'invalid' } } })).to.be.true;
@@ -527,8 +527,8 @@ describe('SignInForm', () => {
       const submitMethod = stub(element, 'submit');
 
       element.edit({
+        credential: { email: 'foo@example.com', new_password: 'baz', password: 'bar' },
         type: 'password',
-        credential: { email: 'foo@example.com', password: 'bar', new_password: 'baz' },
       });
 
       const field = (await getByTestId(element, 'password')) as PasswordFieldElement;
@@ -540,7 +540,7 @@ describe('SignInForm', () => {
     it('renders "new-password:before" slot when visible', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByName(element, 'new-password:before')).to.have.property('localName', 'slot');
     });
@@ -554,7 +554,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
 
@@ -565,7 +565,7 @@ describe('SignInForm', () => {
     it('renders "new-password:after" slot by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
 
       expect(await getByName(element, 'new-password:after')).to.have.property('localName', 'slot');
     });
@@ -579,7 +579,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', new_password: '' } });
+      element.edit({ credential: { email: '', new_password: '', password: '' } });
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
 
@@ -600,7 +600,7 @@ describe('SignInForm', () => {
     it('is hidden when the form is hidden', async () => {
       const layout = html`<foxy-sign-in-form hidden></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-secret-code')).to.not.exist;
     });
@@ -608,7 +608,7 @@ describe('SignInForm', () => {
     it('is hidden when hiddencontrols matches "mfa-secret-code"', async () => {
       const layout = html`<foxy-sign-in-form hiddencontrols="mfa-secret-code"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-secret-code')).to.not.exist;
     });
@@ -616,7 +616,7 @@ describe('SignInForm', () => {
     it('is visible if form.credential.mfa_secret_code exists', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-secret-code')).to.exist;
     });
@@ -633,8 +633,8 @@ describe('SignInForm', () => {
       });
 
       element.edit({
-        type: 'password',
         credential: { email: 'foo@bar.test', password: '123' },
+        type: 'password',
       });
 
       element.submit();
@@ -646,7 +646,7 @@ describe('SignInForm', () => {
     it('renders "mfa-secret-code:before" slot when visible', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
 
       const slot = await getByName(element, 'mfa-secret-code:before');
       expect(slot).to.have.property('localName', 'slot');
@@ -661,7 +661,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
 
@@ -672,7 +672,7 @@ describe('SignInForm', () => {
     it('renders "mfa-secret-code:after" slot when visible', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
 
       const slot = await getByName(element, 'mfa-secret-code:after');
       expect(slot).to.have.property('localName', 'slot');
@@ -687,7 +687,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: '123' } });
+      element.edit({ credential: { email: '', mfa_secret_code: '123', password: '' } });
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
 
@@ -702,7 +702,7 @@ describe('SignInForm', () => {
       const layout = html`<foxy-sign-in-form issuer=${issuer}></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
 
-      element.edit({ credential: { email, password: '', mfa_secret_code: code } });
+      element.edit({ credential: { email, mfa_secret_code: code, password: '' } });
 
       const otpauthUrl = new URL(`otpauth://totp/${issuer}:${encodeURIComponent(email)}`);
       otpauthUrl.searchParams.set('secret', code);
@@ -717,7 +717,7 @@ describe('SignInForm', () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
 
-      element.edit({ credential: { email: '', password: '', mfa_secret_code: code } });
+      element.edit({ credential: { email: '', mfa_secret_code: code, password: '' } });
 
       const mfaSecretCode = await getByTestId(element, 'mfa-secret-code');
       expect(mfaSecretCode).to.contain.text(code);
@@ -736,7 +736,7 @@ describe('SignInForm', () => {
     it('is hidden when the form is hidden', async () => {
       const layout = html`<foxy-sign-in-form hidden></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.not.exist;
     });
@@ -744,7 +744,7 @@ describe('SignInForm', () => {
     it('is hidden when hiddencontrols matches "mfa-totp-code"', async () => {
       const layout = html`<foxy-sign-in-form hiddencontrols="mfa-totp-code"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.not.exist;
     });
@@ -752,7 +752,7 @@ describe('SignInForm', () => {
     it('is visible if form.credential.mfa_totp_code exists', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.exist;
     });
@@ -769,8 +769,8 @@ describe('SignInForm', () => {
       });
 
       element.edit({
-        type: 'password',
         credential: { email: 'foo@bar.test', password: '123' },
+        type: 'password',
       });
 
       element.submit();
@@ -791,8 +791,8 @@ describe('SignInForm', () => {
       });
 
       element.edit({
-        type: 'password',
         credential: { email: 'foo@bar.test', password: '123' },
+        type: 'password',
       });
 
       element.submit();
@@ -804,7 +804,7 @@ describe('SignInForm', () => {
     it('has i18n label with key "mfa_totp_code"', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const control = await getByTestId<TextFieldElement>(element, 'mfa-totp-code');
       expect(control).to.have.attribute('label', 'mfa_totp_code');
@@ -817,9 +817,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_secret_code: '123',
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -830,7 +830,7 @@ describe('SignInForm', () => {
     it('has value of form.credential.mfa_totp_code', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const control = await getByTestId<TextFieldElement>(element, 'mfa-totp-code');
       expect(control).to.have.property('value', '123');
@@ -839,7 +839,7 @@ describe('SignInForm', () => {
     it('writes to form.credential.mfa_totp_code on input', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const control = await getByTestId<TextFieldElement>(element, 'mfa-totp-code');
       control!.value = '456';
@@ -851,7 +851,7 @@ describe('SignInForm', () => {
     it('renders "mfa-totp-code:before" slot by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const slot = await getByName<HTMLSlotElement>(element, 'mfa-totp-code:before');
       expect(slot).to.have.property('localName', 'slot');
@@ -866,7 +866,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
@@ -878,7 +878,7 @@ describe('SignInForm', () => {
     it('renders "mfa-totp-code:after" slot by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const slot = await getByName<HTMLSlotElement>(element, 'mfa-totp-code:after');
       expect(slot).to.have.property('localName', 'slot');
@@ -893,7 +893,7 @@ describe('SignInForm', () => {
         </foxy-sign-in-form>
       `);
 
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       const slot = await getByName<HTMLSlotElement>(element, name);
       const sandbox = (await getByTestId<InternalSandbox>(element, name))!.renderRoot;
@@ -905,7 +905,7 @@ describe('SignInForm', () => {
     it('is editable by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).not.to.have.attribute('readonly');
     });
@@ -913,14 +913,14 @@ describe('SignInForm', () => {
     it('is readonly when element is readonly', async () => {
       const layout = html`<foxy-sign-in-form readonly></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
       expect(await getByTestId(element, 'mfa-totp-code')).to.have.attribute('readonly');
     });
 
     it('is readonly when readonlycontrols includes mfa-totp-code', async () => {
       const layout = html`<foxy-sign-in-form readonlycontrols="mfa-totp-code"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.have.attribute('readonly');
     });
@@ -928,7 +928,7 @@ describe('SignInForm', () => {
     it('is enabled by default', async () => {
       const layout = html`<foxy-sign-in-form></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).not.to.have.attribute('disabled');
     });
@@ -936,7 +936,7 @@ describe('SignInForm', () => {
     it('is disabled when element is disabled', async () => {
       const layout = html`<foxy-sign-in-form disabled></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.have.attribute('disabled');
     });
@@ -944,7 +944,7 @@ describe('SignInForm', () => {
     it('is disabled when disabledcontrols includes mfa-totp-code', async () => {
       const layout = html`<foxy-sign-in-form disabledcontrols="mfa-totp-code"></foxy-sign-in-form>`;
       const element = await fixture<SignInForm>(layout);
-      element.edit({ credential: { email: '', password: '', mfa_totp_code: '123' } });
+      element.edit({ credential: { email: '', mfa_totp_code: '123', password: '' } });
 
       expect(await getByTestId(element, 'mfa-totp-code')).to.have.attribute('disabled');
     });
@@ -955,12 +955,12 @@ describe('SignInForm', () => {
       const element = await fixture<SignInForm>(layout);
 
       element.edit({
-        type: 'password',
         credential: {
           email: 'foo@bar.test',
-          password: '123',
           mfa_totp_code: '123',
+          password: '123',
         },
+        type: 'password',
       });
 
       element.submit();
@@ -985,9 +985,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1002,9 +1002,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1018,9 +1018,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1039,8 +1039,8 @@ describe('SignInForm', () => {
       });
 
       element.edit({
-        type: 'password',
         credential: { email: 'foo@bar.test', password: '123' },
+        type: 'password',
       });
 
       element.submit();
@@ -1056,9 +1056,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1075,9 +1075,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1094,9 +1094,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1111,9 +1111,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: false,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1132,9 +1132,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1154,9 +1154,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1174,9 +1174,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1196,9 +1196,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1216,9 +1216,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1232,9 +1232,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1249,9 +1249,9 @@ describe('SignInForm', () => {
       element.edit({
         credential: {
           email: '',
-          password: '',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '',
         },
       });
 
@@ -1264,13 +1264,13 @@ describe('SignInForm', () => {
       const element = await fixture<SignInForm>(layout);
 
       element.edit({
-        type: 'password',
         credential: {
           email: 'foo@bar.test',
-          password: '123',
-          mfa_totp_code: '123',
           mfa_remember_device: true,
+          mfa_totp_code: '123',
+          password: '123',
         },
+        type: 'password',
       });
 
       element.submit();
@@ -1313,8 +1313,8 @@ describe('SignInForm', () => {
       const element = await fixture<SignInForm>(layout);
 
       element.edit({
-        type: 'password',
         credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+        type: 'password',
       });
 
       element.submit();
@@ -1344,8 +1344,8 @@ describe('SignInForm', () => {
         );
 
         element.edit({
-          type: 'password',
           credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+          type: 'password',
         });
 
         element.submit();
@@ -1459,8 +1459,8 @@ describe('SignInForm', () => {
       const element = await fixture<SignInForm>(layout);
 
       element.edit({
-        type: 'password',
         credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+        type: 'password',
       });
 
       element.submit();
@@ -1483,8 +1483,8 @@ describe('SignInForm', () => {
       const submit = stub(element, 'submit');
 
       element.edit({
-        type: 'password',
         credential: { email: 'justice.witt@example.com', password: '74ylbsXd47ybOa_3!' },
+        type: 'password',
       });
 
       control!.dispatchEvent(new CustomEvent('click'));

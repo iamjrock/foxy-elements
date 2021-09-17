@@ -1,8 +1,8 @@
-import { aTimeout, elementUpdated, expect, fixture, html, oneEvent } from '@open-wc/testing';
 import * as sinon from 'sinon';
+import { Dropdown, ErrorScreen } from '../../private';
+import { aTimeout, elementUpdated, expect, fixture, html, oneEvent } from '@open-wc/testing';
 import { ItemsForm } from './ItemsForm';
 import { MockItem } from '../../../mocks/FxItem';
-import { Dropdown, ErrorScreen } from '../../private';
 
 const cartWideFields = ['sub_token', 'sub_modify', 'sub_restart', 'sub_cancel'];
 
@@ -14,9 +14,9 @@ const cartWideFields = ['sub_token', 'sub_modify', 'sub_restart', 'sub_cancel'];
 class TestItemsForm extends ItemsForm {
   public static get scopedElements(): Record<string, unknown> {
     return {
-      'x-error-screen': ErrorScreen,
       'vaadin-button': customElements.get('vaadin-button'),
       'x-dropdown': Dropdown,
+      'x-error-screen': ErrorScreen,
       'x-item': MockItem,
     };
   }
@@ -262,28 +262,28 @@ describe('The form should remain valid', async function () {
   }
   const frequencyTests: FrequencyFormatTest[] = [
     {
-      it: 'Should accept valid frequencies',
       frequencies: ['5d', '10d', '15d', '1m', '1y', '.5m'],
+      it: 'Should accept valid frequencies',
       logHappens: false,
     },
     {
-      it: 'Should reject numeric frequencies',
       frequencies: ['5', '10d'],
+      it: 'Should reject numeric frequencies',
       logHappens: true,
     },
     {
-      it: 'Should reject empty string frequencies',
       frequencies: [''],
+      it: 'Should reject empty string frequencies',
       logHappens: true,
     },
     {
-      it: 'Should not accept string frequencies, it must be an array',
       frequencies: '5d, 10d',
+      it: 'Should not accept string frequencies, it must be an array',
       logHappens: true,
     },
     {
-      it: 'Should not accept null frequency, it must be an array, ',
       frequencies: null,
+      it: 'Should not accept null frequency, it must be an array, ',
       logHappens: true,
     },
   ];
@@ -315,32 +315,32 @@ describe('The form should remain valid', async function () {
   const tomorrowStr = tomorrow.toISOString().replace(/(-|T.*)/g, '');
   const dateFormatsTests: DateFormatTest[] = [
     {
-      it: 'Should accept valid start date formats',
+      dateType: 'start',
       dates: ['20201010', '20', '2', '1d', '12w', '2y', '10m'],
-      logMessage: 'Invalid start date',
-      dateType: 'start',
+      it: 'Should accept valid start date formats',
       logHappens: false,
+      logMessage: 'Invalid start date',
     },
     {
-      it: 'Should not accept invalid start date formats',
+      dateType: 'start',
       dates: ['202010100', '80', '.5m', 'tomorrow', 'today', '-1'],
+      it: 'Should not accept invalid start date formats',
+      logHappens: true,
       logMessage: 'Invalid start date',
-      dateType: 'start',
-      logHappens: true,
     },
     {
-      it: 'Should accept valid end date formats',
+      dateType: 'end',
       dates: [tomorrowStr, '20', '2', '1d', '12w', '2y', '10m'],
-      logMessage: 'Invalid end date',
-      dateType: 'end',
+      it: 'Should accept valid end date formats',
       logHappens: false,
+      logMessage: 'Invalid end date',
     },
     {
-      it: 'Should not accept invalid end date formats',
-      dates: ['20191010', '219810100', '80', '.5m', 'tomorrow', '-1'],
       dateType: 'end',
-      logMessage: 'Invalid end date',
+      dates: ['20191010', '219810100', '80', '.5m', 'tomorrow', '-1'],
+      it: 'Should not accept invalid end date formats',
       logHappens: true,
+      logMessage: 'Invalid end date',
     },
   ];
   for (const t of dateFormatsTests) {
@@ -427,8 +427,8 @@ describe('The form should add frequency fields', async function () {
 describe('The form submits a valid POST to forxycart', async function () {
   const sig64 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
   const signatures = {
-    name: sig64,
     code: sig64,
+    name: sig64,
     price: sig64,
     quantity: sig64,
     sub_modify: sig64,
@@ -493,7 +493,7 @@ describe('The form submits a valid POST to forxycart', async function () {
     const form = el.shadowRoot!.querySelector('form') as HTMLFormElement;
     expect(form).to.exist;
     const fd = new FormData(form);
-    for (const [k, v] of fd.entries()) {
+    for (const k of fd.keys()) {
       if (k != 'cart') {
         expect(k).to.match(/.*signed.*/);
       }
@@ -753,8 +753,11 @@ describe('The form reveals its state to the user', async function () {
 /** Helper functions **/
 
 /**
- * @param price1
- * @param price2
+ * Creates a form element with two items.
+ *
+ * @param price1 the price of the first item
+ * @param price2 the price of the second item
+ * @returns the items element
  */
 async function formWith2items(price1: number, price2: number) {
   const el = await fixture(html`
@@ -773,6 +776,7 @@ async function formWith2items(price1: number, price2: number) {
  *
  * @param formData
  * @param name
+ * @returns values
  */
 function valuesFromField(formData: FormData, name: string): FormDataEntryValue[] {
   const re = new RegExp(`\\d+:${name}(||.*)?`);
