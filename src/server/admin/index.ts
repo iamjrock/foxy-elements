@@ -20,7 +20,6 @@ import { createTemplateComposeFunction } from './composers/composeTemplates';
 import { getPagination } from '../getPagination';
 import { router } from '../router';
 
-const endpoint = 'https://demo.foxycart.com/s/admin';
 export { endpoint, router, db, whenDbReady, DemoDatabase };
 const endpoint = 'https://demo.foxycart.com/s/admin';
 
@@ -90,10 +89,10 @@ router.get('/s/admin/stores/:id/subscriptions', async ({ params, request }) => {
   );
 
   const items = subscriptions.map((subscription, index) => ({
-    transactionTemplate: embeddedTransactionTemplateBySubscription[index],
-    lastTransaction: embeddedLastTransactionBySubscription[index],
     items: embeddedItemsBySubscription[index],
+    lastTransaction: embeddedLastTransactionBySubscription[index],
     subscription,
+    transactionTemplate: embeddedTransactionTemplateBySubscription[index],
   }));
 
   const composeItem = ({ subscription, items, lastTransaction, transactionTemplate }: any) => {
@@ -101,7 +100,7 @@ router.get('/s/admin/stores/:id/subscriptions', async ({ params, request }) => {
   };
 
   const rel = 'fx:subscriptions';
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -147,8 +146,8 @@ router.get('/s/admin/stores/:id/transactions', async ({ params, request }) => {
   );
 
   const items = transactions.map((transaction, index) => ({
-    transaction,
     items: embeddedItemsByTransaction[index],
+    transaction,
   }));
 
   const composeItem = ({ transaction, items }: any) => {
@@ -156,7 +155,7 @@ router.get('/s/admin/stores/:id/transactions', async ({ params, request }) => {
   };
 
   const rel = 'fx:transactions';
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -264,7 +263,7 @@ router.get('/s/admin/stores/:id/error_entries', async ({ params, request }) => {
     }
     const rel = 'fx:error_entries';
     const composeItem = composeErrorEntry;
-    const body = composeCollection({ composeItem, rel, url, count, items });
+    const body = composeCollection({ composeItem, count, items, rel, url });
     return new Response(JSON.stringify(body));
   } catch (e) {
     console.log('There was an error', e);
@@ -314,7 +313,7 @@ router.get('/s/admin/customers/:id/attributes', async ({ params, request }) => {
   ]);
   const rel = 'fx:attributes';
   const composeItem = composeCustomerAttribute;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -333,12 +332,12 @@ router.post('/s/admin/customers/:id/attributes', async ({ params, request }) => 
 
   const requestBody = await request.json();
   const newID = await db.customerAttributes.add({
-    name: requestBody.name ?? '',
-    value: requestBody.value ?? '',
     customer: parseInt(params.id),
-    visibility: requestBody.visibility ?? 'private',
     date_created: new Date().toISOString(),
     date_modified: new Date().toISOString(),
+    name: requestBody.name ?? '',
+    value: requestBody.value ?? '',
+    visibility: requestBody.visibility ?? 'private',
   });
 
   const newDoc = await db.customerAttributes.get(newID);
@@ -383,7 +382,7 @@ router.get('/s/admin/customers/:id/addresses', async ({ params, request }) => {
 
   const rel = 'fx:customer_addresses';
   const composeItem = composeCustomerAddress;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -464,7 +463,7 @@ router.get('/s/admin/stores/:id/customers', async ({ params, request }) => {
 
   const rel = 'fx:customers';
   const composeItem = composeCustomer;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -595,14 +594,19 @@ router.get('/s/admin/stores/:id/taxes', async ({ request }) => {
 
 // Templates
 router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
-  return respondItems(db.emailTemplates, composeCartTemplate, request.url, 'fx:email_templates');
+  return respondItems(
+    db.emailTemplates,
+    createTemplateComposeFunction('cart_template'),
+    request.url,
+    'fx:email_templates'
+  );
 });
 
 router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);
 });
 
-router.get('/s/admin/template/:template_type/:id', async ({ params, request }) => {
+router.get('/s/admin/template/:template_type/:id', async ({ params }) => {
   const tplDict: Record<string, Dexie.Table> = {
     cart_include_templates: db.cartIncludeTemplates,
     cart_templates: db.cartTemplates,
