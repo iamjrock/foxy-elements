@@ -45,6 +45,7 @@ export default {
       include: [
         '**/indexeddb-export-import/**/*',
         '**/email-validator/**/*',
+        '**/cookie-storage/**/*',
         '**/highlight.js/**/*',
         '**/url-pattern/**/*',
         '**/traverse/**/*',
