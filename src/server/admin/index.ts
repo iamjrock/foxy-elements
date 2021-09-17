@@ -38,6 +38,21 @@ interface Country {
   active: boolean;
 }
 
+interface Country {
+  default: string;
+  cc2: string;
+  cc3: string;
+  alternate_values: string[];
+  boost: number;
+  has_regions?: boolean;
+  regions?:
+    | []
+    | Record<string, { n: string; c: string; alt: string[]; boost: number; active: boolean }>;
+  regions_required: boolean;
+  regions_type: string;
+  active: boolean;
+}
+
 // subscriptions
 
 router.get('/s/admin/stores/:id/subscriptions', async ({ params, request }) => {
@@ -601,6 +616,8 @@ router.get('/s/admin/stores/:id/email_templates', async ({ request }) => {
     'fx:email_templates'
   );
 });
+
+// Templates
 
 router.get('/s/admin/email_templates/:id', async ({ params }) => {
   return respondItemById(db.emailTemplates, parseInt(params.id), composeEmailTemplate);

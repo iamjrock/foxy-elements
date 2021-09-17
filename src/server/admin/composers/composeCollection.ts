@@ -17,7 +17,13 @@ type Params = {
  * @param root0.items
  * @param root0.composeItem
  */
-export function composeCollection({ url, rel, count, items, composeItem }: Params) {
+export function composeCollection({
+  url,
+  rel,
+  count,
+  items,
+  composeItem,
+}: Params): HALJSONResource {
   const limitInQuery = parseInt(new URL(url).searchParams.get('limit') ?? '20');
   const limit = isNaN(limitInQuery) || limitInQuery > 300 || limitInQuery < 0 ? 20 : limitInQuery;
 

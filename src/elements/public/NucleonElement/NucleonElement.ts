@@ -284,7 +284,9 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     const data = await this._fetch(this.parent, { body, method: 'POST' });
     const rumour = NucleonElement.Rumour(this.group);
 
+    this.__destroyRumour();
     rumour.share({ data, related: [this.parent], source: data._links.self.href });
+    this.__createRumour();
     return data;
   }
 
@@ -293,7 +295,9 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     const data = await this._fetch(this.href);
     const rumour = NucleonElement.Rumour(this.group);
 
+    this.__destroyRumour();
     rumour.share({ data, source: this.href });
+    this.__createRumour();
     return data;
   }
 
@@ -307,7 +311,9 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
     const data = await this._fetch(this.href, { body, method: 'PATCH' });
     const rumour = NucleonElement.Rumour(this.group);
 
+    this.__destroyRumour();
     rumour.share({ data, source: this.href });
+    this.__createRumour();
     return data;
   }
 
@@ -363,7 +369,7 @@ export class NucleonElement<TData extends HALJSONResource> extends LitElement {
 
   private __handleRumourUpdate(update: (oldData: TData) => TData | null) {
     try {
-      const oldData = this.__service.state.context.data;
+      const oldData = this.__service.state?.context.data;
       if (!oldData) return;
 
       const newData = update(oldData);

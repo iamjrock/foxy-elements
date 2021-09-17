@@ -61,12 +61,8 @@ class DemoDatabase extends Dexie {
     this.version(4).stores({
       cart_include_templates: '++id,store',
       cart_templates: '++id,store',
-      cart_templates: '++id,store',
       carts: '++id',
       checkout_templates: '++id,store',
-      customer_attributes: '++id,customer',
-      customer_portal_settings: 'store',
-      customers: '++id,store',
       customer_addresses: '++id,customer',
       customer_attributes: '++id,customer',
       customer_portal_settings: 'store',
