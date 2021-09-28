@@ -1,0 +1,140 @@
+{
+  "add-hidden-product": "Add hidden option",
+  "analytics_config": {
+    "summary": "Configure your analytics",
+    "label-enable": "Enable Google Analytics",
+    "usage": "Usage",
+    "google_analytics": {
+      "usage": "Usage",
+      "account_id": "Tracking id",
+      "include_on_site": "Include Google Analytics on my website via loader.js"
+    }
+  },
+  "cart": "Cart",
+  "cart_display": {
+    "title": "Cart display"
+  },
+  "cart_display_config": {
+    "hidden_product_options": "hidden options",
+    "show_enddate": "End date",
+    "show_product_category": "Category code",
+    "show_product_code": "Code",
+    "show_product_options": "Options",
+    "show_product_weight": "Weight",
+    "show_sub_frequency": "Frequency",
+    "show_sub_nextdate": "Next date",
+    "show_sub_startdate": "Start date",
+    "usage": "Customize cart display"
+  },
+  "cart_type": {
+    "custom": "Custom",
+    "default": "Sidecart",
+    "fullpage": "Full page",
+    "title": "Cart type"
+  },
+  "checkout": "Checkout",
+  "checkout_type": {
+    "title": "Checkout type",
+    "default_account": "Default to customer accounts",
+    "account_only": "Only accept customer accounts",
+    "default_guest": "Default to guest accounts",
+    "guest_only": "Only accept guest accounts"
+  },
+  "colors": {
+    "title": "Basic color customization",
+    "primary": "Primary",
+    "secondary": "Secondary",
+    "tertiary": "Tertiary"
+  },
+  "creditcard_config": {
+    "title": "Credit Card configuration"
+  },
+  "support_payment_cards": {
+    "amex": "Amex",
+    "dinersclub": "Dinersclub",
+    "discover": "Discover",
+    "laser": "Laser",
+    "maestro": "Maestro",
+    "mastercard": "Mastercard",
+    "visa": "Visa"
+  },
+  "csc_requirements": {
+    "title": "Require Card Security Code (CSC)",
+    "all_cards": "All cards",
+    "sso_only": "New cards and SSO only",
+    "new_cards_only": "New cards only"
+  },
+  "custom": "Custom",
+  "custom_checkout_field_requirements": {
+    "title": "Checkout fields",
+    "title-billing-shipping": "Shipping and Billing configurable fields",
+    "title-billing": "Billing only configurable fields",
+    "billing_address1": "Address",
+    "billing_address2": "Address Line 2",
+    "cart_controls": "Allow editing quantities",
+    "billing_city": "City",
+    "billing_company": "Company",
+    "billing_country": "Country",
+    "coupon_entry": "Show a coupon entry field",
+    "billing_first_name": "First name",
+    "billing_last_name": "Last name",
+    "billing_phone": "Phone",
+    "billing_postal_code": "Postal code",
+    "billing_region": "Region",
+    "billing_tax_id": "Tax id"
+  },
+  "custom_config": "Custom variables for the twig template (JSON).",
+  "custom_script_values": {
+    "title": "Custom scripts",
+    "header": "Header",
+    "footer": "Footer",
+    "checkout_fields": "Checkout fields",
+    "multiship_checkout_fields": "Multiship checkout fields"
+  },
+  "default": "Default",
+  "debug-usage": "Log debug messages to the browser's console.",
+  "eu_secure_data_transfer_consent": {
+    "usage": "Display a Secure Data Transfer agreement to EU customers"
+  },
+  "foxycomplete": {
+    "title": "Autocomplete",
+    "usage": "Autocomplete locations",
+    "show_flags": "Show country flags",
+    "show_combobox": "Show combo box",
+    "combobox_open": "open icon",
+    "combobox_close": "close icon"
+  },
+  "fullpage": "Full page",
+  "newsletter_subscribe": {
+    "usage": "Allow users to subscribe to a newsletter"
+  },
+  "none": "None",
+  "location_filtering": {
+    "title": "Location filtering",
+    "independently": "Configure shipping and billing filters indepedently",
+    "whitelist": "Allow locations",
+    "blacklist": "Disallow locations",
+    "shipping": "Shipping",
+    "billing": "Billing"
+  },
+  "product": "Product",
+  "postal_code_lookup": {
+    "enable": "Enable city and region lookup by postal code"
+  },
+  "required": "Required",
+  "tos_checkbox_settings":{
+    "title": "Terms of Service",
+    "label": "Configure terms of service agreement",
+    "disabled": "Disable",
+    "optional-default-checked": "Agreement is optional, checked by default",
+    "optional-default-checked-hidden": "Agreement is optional, checked by default, field is hidden",
+    "optional-default-unchecked": "Agreement is optional, not checked by default",
+    "optional-default-unchecked-hidden": "Agreement is optional, not checked by default, field is hidden",
+    "required-default-checked": "Agreement is optional, checked by default",
+    "required-default-checked-hidden": "Agreement is optional, checked by default",
+    "required-default-unchecked": "Agreement is optional, checked by default",
+    "required-default-unchecked-hidden": "Agreement is optional, checked by default"
+  },
+  "subscription": "Subscription",
+  "your-website": "Your website"
+}

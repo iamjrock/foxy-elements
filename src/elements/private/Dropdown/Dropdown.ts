@@ -93,7 +93,7 @@ export class Dropdown extends LitElement {
     let list = root.querySelector('vaadin-list-box');
     if (list === null) {
       root.appendChild(this.__list);
-      list = this.__list;
+      list = this.__list as any;
     }
     // Clean up keep indicator
     for (const v of Object.values(this.__renderedItems)) {
@@ -103,7 +103,7 @@ export class Dropdown extends LitElement {
     const items = this.items ?? [];
     for (let i = 0; i < items.length; ++i) {
       if (typeof items[i] === 'string') {
-        this.__addOrKeepItem(items[i] as string, items[i] as string, list).classList.add(
+        this.__addOrKeepItem(items[i] as string, items[i] as string, list as any).classList.add(
           'dropdown-item'
         );
       } else if (Array.isArray(items[i])) {

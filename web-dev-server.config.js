@@ -20,8 +20,9 @@ export default {
 
   mimeTypes: {
     '**/*.cjs': 'js',
-    '**/dump.json': 'js',
+    '**/countries.json': 'js',
     '**/custom-elements.json': 'js',
+    '**/dump.json': 'js',
   },
 
   middleware: [

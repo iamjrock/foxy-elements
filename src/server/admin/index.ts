@@ -1,6 +1,8 @@
 import { DemoDatabase, db, whenDbReady } from '../DemoDatabase';
-
+import { HALJSONResource } from '../../elements/public/NucleonElement/types';
+import { Table } from 'dexie';
 import { composeCollection } from './composers/composeCollection';
+import { composeCountries } from './composers/composeCountries';
 import { composeCustomer } from './composers/composeCustomer';
 import { composeCustomerAddress } from './composers/composeCustomerAddress';
 import { composeCustomerAttribute } from './composers/composeCustomerAttribute';
@@ -8,6 +10,7 @@ import { composeDefaultPaymentMethod } from './composers/composeDefaultPaymentMe
 import { composeErrorEntry } from './composers/composeErrorEntry';
 import { composeItem } from './composers/composeItem';
 import { composeSubscription } from './composers/composeSubscription';
+import { composeTemplateConfig } from './composers/composeTemplateConfig';
 import { composeTransaction } from './composers/composeTransaction';
 import { composeUser } from './composers/composeUser';
 import { getPagination } from '../getPagination';
@@ -15,6 +18,36 @@ import { router } from '../router';
 
 const endpoint = 'https://demo.foxycart.com/s/admin';
 export { endpoint, router, db, whenDbReady, DemoDatabase };
+
+interface Country {
+  default: string;
+  cc2: string;
+  cc3: string;
+  alternate_values: string[];
+  boost: number;
+  has_regions?: boolean;
+  regions?:
+    | []
+    | Record<string, { n: string; c: string; alt: string[]; boost: number; active: boolean }>;
+  regions_required: boolean;
+  regions_type: string;
+  active: boolean;
+}
+
+interface Country {
+  default: string;
+  cc2: string;
+  cc3: string;
+  alternate_values: string[];
+  boost: number;
+  has_regions?: boolean;
+  regions?:
+    | []
+    | Record<string, { n: string; c: string; alt: string[]; boost: number; active: boolean }>;
+  regions_required: boolean;
+  regions_type: string;
+  active: boolean;
+}
 
 // subscriptions
 
@@ -67,10 +100,10 @@ router.get('/s/admin/stores/:id/subscriptions', async ({ params, request }) => {
   );
 
   const items = subscriptions.map((subscription, index) => ({
-    transactionTemplate: embeddedTransactionTemplateBySubscription[index],
-    lastTransaction: embeddedLastTransactionBySubscription[index],
     items: embeddedItemsBySubscription[index],
+    lastTransaction: embeddedLastTransactionBySubscription[index],
     subscription,
+    transactionTemplate: embeddedTransactionTemplateBySubscription[index],
   }));
 
   const composeItem = ({ subscription, items, lastTransaction, transactionTemplate }: any) => {
@@ -78,7 +111,7 @@ router.get('/s/admin/stores/:id/subscriptions', async ({ params, request }) => {
   };
 
   const rel = 'fx:subscriptions';
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -124,8 +157,8 @@ router.get('/s/admin/stores/:id/transactions', async ({ params, request }) => {
   );
 
   const items = transactions.map((transaction, index) => ({
-    transaction,
     items: embeddedItemsByTransaction[index],
+    transaction,
   }));
 
   const composeItem = ({ transaction, items }: any) => {
@@ -133,7 +166,7 @@ router.get('/s/admin/stores/:id/transactions', async ({ params, request }) => {
   };
 
   const rel = 'fx:transactions';
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -189,7 +222,6 @@ router.get('/s/admin/subscriptions/:id', async ({ params, request }) => {
   const id = parseInt(params.id);
   const doc = await db.subscriptions.get(id);
   const zoom = new URL(request.url).searchParams.get('zoom') ?? '';
-
   const lastTransaction = zoom.includes('last_transaction')
     ? await db.transactions.where('subscription').equals(id).last()
     : undefined;
@@ -242,7 +274,7 @@ router.get('/s/admin/stores/:id/error_entries', async ({ params, request }) => {
     }
     const rel = 'fx:error_entries';
     const composeItem = composeErrorEntry;
-    const body = composeCollection({ composeItem, rel, url, count, items });
+    const body = composeCollection({ composeItem, count, items, rel, url });
     return new Response(JSON.stringify(body));
   } catch (e) {
     console.log('There was an error', e);
@@ -277,7 +309,7 @@ router.get('/s/admin/customers/:id/attributes', async ({ params, request }) => {
   ]);
   const rel = 'fx:attributes';
   const composeItem = composeCustomerAttribute;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -296,12 +328,12 @@ router.post('/s/admin/customers/:id/attributes', async ({ params, request }) => 
 
   const requestBody = await request.json();
   const newID = await db.customerAttributes.add({
-    name: requestBody.name ?? '',
-    value: requestBody.value ?? '',
     customer: parseInt(params.id),
-    visibility: requestBody.visibility ?? 'private',
     date_created: new Date().toISOString(),
     date_modified: new Date().toISOString(),
+    name: requestBody.name ?? '',
+    value: requestBody.value ?? '',
+    visibility: requestBody.visibility ?? 'private',
   });
 
   const newDoc = await db.customerAttributes.get(newID);
@@ -346,7 +378,7 @@ router.get('/s/admin/customers/:id/addresses', async ({ params, request }) => {
 
   const rel = 'fx:customer_addresses';
   const composeItem = composeCustomerAddress;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -357,24 +389,24 @@ router.post('/s/admin/customers/:id/addresses', async ({ params, request }) => {
   const customer = await db.customers.get(parseInt(params.id));
   const requestBody = await request.json();
   const newID = await db.customerAddresses.add({
-    store: customer.store,
-    customer: customer.id,
-    address_name: requestBody.address_name ?? '',
-    first_name: requestBody.first_name ?? '',
-    last_name: requestBody.last_name ?? '',
-    company: requestBody.company ?? '',
     address1: requestBody.address1,
     address2: requestBody.address2 ?? '',
+    address_name: requestBody.address_name ?? '',
     city: requestBody.city ?? '',
-    region: requestBody.region ?? '',
-    postal_code: requestBody.postal_code ?? '',
+    company: requestBody.company ?? '',
     country: requestBody.country ?? '',
-    phone: requestBody.phone ?? '',
-    is_default_billing: requestBody.is_default_billing ?? false,
-    is_default_shipping: requestBody.is_default_shipping ?? false,
-    ignore_address_restrictions: requestBody.ignore_address_restrictions ?? false,
+    customer: customer.id,
     date_created: new Date().toISOString(),
     date_modified: new Date().toISOString(),
+    first_name: requestBody.first_name ?? '',
+    ignore_address_restrictions: requestBody.ignore_address_restrictions ?? false,
+    is_default_billing: requestBody.is_default_billing ?? false,
+    is_default_shipping: requestBody.is_default_shipping ?? false,
+    last_name: requestBody.last_name ?? '',
+    phone: requestBody.phone ?? '',
+    postal_code: requestBody.postal_code ?? '',
+    region: requestBody.region ?? '',
+    store: customer.store,
   });
 
   const newDoc = await db.customerAddresses.get(newID);
@@ -427,7 +459,7 @@ router.get('/s/admin/stores/:id/customers', async ({ params, request }) => {
 
   const rel = 'fx:customers';
   const composeItem = composeCustomer;
-  const body = composeCollection({ composeItem, rel, url, count, items });
+  const body = composeCollection({ composeItem, count, items, rel, url });
 
   return new Response(JSON.stringify(body));
 });
@@ -492,7 +524,7 @@ router.get('/s/admin/stores/:id/users', async ({ params, request }) => {
     db.users.where('store').equals(store).offset(offset).limit(limit).toArray(),
   ]);
 
-  const body = composeCollection({ composeItem: composeUser, rel, url, count, items });
+  const body = composeCollection({ composeItem: composeUser, count, items, rel, url });
   return new Response(JSON.stringify(body));
 });
 
@@ -501,18 +533,18 @@ router.post('/s/admin/stores/:id/users', async ({ params, request }) => {
 
   const body = await request.json();
   const id = await db.users.add({
-    store: parseInt(params.id),
-    first_name: body.first_name ?? '',
-    last_name: body.last_name ?? '',
-    email: body.email ?? '',
-    phone: body.phone ?? '',
     affiliate_id: body.affiliate_id ?? 0,
-    is_programmer: body.is_programmer ?? false,
-    is_front_end_developer: body.is_front_end_developer ?? false,
-    is_designer: body.is_designer ?? false,
-    is_merchant: body.is_merchant ?? false,
     date_created: new Date().toISOString(),
     date_modified: new Date().toISOString(),
+    email: body.email ?? '',
+    first_name: body.first_name ?? '',
+    is_designer: body.is_designer ?? false,
+    is_front_end_developer: body.is_front_end_developer ?? false,
+    is_merchant: body.is_merchant ?? false,
+    is_programmer: body.is_programmer ?? false,
+    last_name: body.last_name ?? '',
+    phone: body.phone ?? '',
+    store: parseInt(params.id),
   });
 
   return router.handle(`/s/admin/users/${id}`, 'GET')!.handlerPromise;
@@ -544,6 +576,44 @@ router.delete('/s/admin/users/:id', async ({ params, request }) => {
   await db.users.delete(parseInt(params.id));
 
   return user;
+});
+
+router.get('/s/admin/template_configs/:id', async ({ params }) => {
+  return respondItemById(db.templateConfig, parseInt(params.id), composeTemplateConfig);
+});
+
+/**
+ * Returns a response object with the composed entry for the given id in the given table.
+ *
+ * @param table the Dixie table storing the data
+ * @param id the id number to be fetched
+ * @param composer the function to be used to compose the response into a HAL Resource
+ * @returns response object with the item requested.
+ */
+async function respondItemById(
+  table: Table,
+  id: number,
+  composer: (d: any) => HALJSONResource
+): Promise<Response> {
+  await whenDbReady;
+  const body = composer(await table.get(id));
+  return new Response(JSON.stringify(body));
+}
+
+// helper routes
+router.get('/property_helpers/countries', async ({ request }) => {
+  const searchParams = new URL(request.url).searchParams;
+  const countries = db.countries;
+  if (!searchParams.has('include_regions')) {
+    // Remove the list of regions if asked by the client
+    for (const v of Object.values(countries)) {
+      const country = v as Country;
+      // an empty array stands for no region
+      country.has_regions = !Array.isArray(country.regions) || country.regions.length > 0;
+      delete country.regions;
+    }
+  }
+  return new Response(JSON.stringify(composeCountries(countries)));
 });
 
 // special routes
