@@ -182,6 +182,13 @@ export class TemplateConfigForm extends Base<Item> {
     `;
   }
 
+  private __renderCart() {
+    return html`
+      ${this.__renderCartType()} ${this.__renderCartConfigFoxyComplete()}
+      ${this.__renderCartConfig()}
+    `;
+  }
+
   private __countriesURL(): string {
     try {
       return new URL(this.href).origin + TemplateConfigForm.countriesHelperPath;
@@ -222,10 +229,6 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderWebsite() {
     return html` ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()} `;
-  }
-
-  private __renderCart() {
-    return html` ${this.__renderCartType()} ${this.__renderCartConfig()} `;
   }
 
   private __renderAdvanced() {
