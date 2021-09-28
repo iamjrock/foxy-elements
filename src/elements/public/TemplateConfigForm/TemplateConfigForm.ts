@@ -741,7 +741,12 @@ export class TemplateConfigForm extends Base<Item> {
         .items=${['default', 'fullpage', 'custom']}
         .value=${this.__getJsonAttribute('cart_type')}
         @change=${this.__handleChangeCartType}
-        .getText=${(v: string) => this.t(`cart_type.${v}`)}
+        .getText=${(v: string) => html`
+          <div class="py-s">
+            <div>${this.t(`cart_type.${v}.title`)}</div>
+            <div class="text-secondary text-s">${this.t(`cart_type.${v}.description`)}</div>
+          </div>
+        `}
       >
       </x-choice>
     `;

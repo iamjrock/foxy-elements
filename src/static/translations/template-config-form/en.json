@@ -27,9 +27,18 @@
     "usage": "Customize cart display"
   },
   "cart_type": {
-    "custom": "Custom",
-    "default": "Sidecart",
-    "fullpage": "Full page",
+    "custom": {
+      "description": "Build your own JSONP cart with included config",
+      "title": "Custom"
+    },
+    "default": {
+      "description": "Default cart appearance in version 2.0",
+      "title": "Sidecart"
+    },
+    "fullpage": {
+      "description": "Send all costumers to a full page cart while still including minicart functionality",
+      "title": "Full page"
+    },
     "title": "Cart type"
   },
   "checkout": "Checkout",
