@@ -199,34 +199,6 @@ export class TemplateConfigForm extends Base<Item> {
     }
   }
 
-  private __renderTabs(tabs: Array<Tab>): TemplateResult {
-    return html` <div class="pt-m">
-      <x-tabs size="${tabs.length}">
-        ${tabs.map(
-          (tab, index) => html`
-            <foxy-i18n
-              data-testclass="i18n"
-              slot="tab-${index}"
-              lang="${this.lang}"
-              key="${tab.title}"
-              ns="${this.ns}"
-            ></foxy-i18n>
-            <div class="pt-s" slot="panel-${index}">${tab.content}</div>
-          `
-        )}
-      </x-tabs>
-      <vaadin-button
-        data-testid="action"
-        theme=${this.in('idle') ? `primary ${this.href ? 'error' : 'success'}` : ''}
-        class="w-full mt-m"
-        ?disabled=${!this.errors.length}
-        @click=${this.__handleActionSubmit}
-      >
-        <foxy-i18n lang=${this.lang} key="update" ns=${this.ns}> </foxy-i18n>
-      </vaadin-button>
-    </div>`;
-  }
-
   private __renderWebsite() {
     return html` ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()} `;
   }
