@@ -14,13 +14,10 @@ import { ItemElement } from '@vaadin/vaadin-item';
 import { ListBoxElement } from '@vaadin/vaadin-list-box';
 import { NucleonElement } from '../NucleonElement';
 import { NucleonV8N } from '../NucleonElement/types';
-import { Tabs } from '../../private/Tabs/Tabs';
 import { ThemeableMixin } from '../../../mixins/themeable';
 import { TranslatableMixin } from '../../../mixins/translatable';
 import { classMap } from '../../../utils/class-map';
 import memoize from 'lodash-es/memoize';
-
-type Tab = { title: string; content: TemplateResult };
 
 const NS = 'template-config-form';
 
@@ -53,6 +50,7 @@ export class TemplateConfigForm extends Base<Item> {
   static get properties(): PropertyDeclarations {
     return {
       ...super.properties,
+      sections: { attribute: false, type: Array },
       __cacheSuccess: { attribute: false, type: Boolean },
       __customizeTemplate: { attribute: false, type: Boolean },
       __enabledAnalytics: { attribute: false, type: Boolean },
@@ -80,7 +78,6 @@ export class TemplateConfigForm extends Base<Item> {
       'x-checkbox': Checkbox,
       'x-choice': Choice,
       'x-group': Group,
-      'x-tabs': Tabs,
     };
   }
 
@@ -90,6 +87,8 @@ export class TemplateConfigForm extends Base<Item> {
       ({ json: v }) => !v || v.length <= 50 || 'content_invalid',
     ];
   }
+
+  sections: Array<'cart' | 'checkout' | 'website'> = [];
 
   // This private variable stores as an object the value of this.form.json,
   // which is a stringified object.
@@ -137,24 +136,27 @@ export class TemplateConfigForm extends Base<Item> {
     });
   }
 
-  render(): TemplateResult {
-    const tabs: Tab[] = [];
-    tabs.push({ title: 'your-website', content: this.__renderYourWebsite() });
-    tabs.push({ title: 'cart', content: this.__renderCart() });
-    tabs.push({ title: 'checkout', content: this.__renderCheckout() });
-    tabs.push({ title: 'advanced', content: this.__renderAdvanced() });
-    return this.in('idle')
-      ? tabs.length === 0
-        ? html``
-        : this.__renderTabs(tabs)
-      : this.__renderSpinner();
-  }
-
-  firstUpdated() {
+  firstUpdated(): void {
     const el = this.shadowRoot?.querySelector('#hidden_product_options');
     if (el) {
       this.__hiddenOptionsElement = el;
     }
+  }
+
+  render(): TemplateResult {
+    return !this.in('idle')
+      ? this.__renderSpinner()
+      : html`
+          ${this.sections.includes('cart') || this.sections.length == 0
+            ? this.__renderCart()
+            : html``}
+          ${this.sections.includes('checkout') || this.sections.length == 0
+            ? this.__renderCheckout()
+            : html``}
+          ${this.sections.includes('website') || this.sections.length == 0
+            ? this.__renderWebsite()
+            : html``}
+        `;
   }
 
   private __renderSpinner(): TemplateResult {
@@ -218,7 +220,7 @@ export class TemplateConfigForm extends Base<Item> {
     </div>`;
   }
 
-  private __renderYourWebsite() {
+  private __renderWebsite() {
     return html` ${this.__renderYourWebsiteAnalytics()} ${this.__renderYourWebsiteDebug()} `;
   }
 
