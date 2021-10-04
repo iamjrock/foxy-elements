@@ -184,8 +184,9 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderCart() {
     return html`
-      ${this.__renderGroup('cart_type', this.__renderCartType())}
+      ${this.__renderGroup('cart_display', this.__renderCartDisplay())}
       ${this.__renderGroup('foxycomplete', this.__renderCartConfigFoxyComplete())}
+      ${this.__renderGroup('location_filtering', this.__renderCartFilter())}
       ${this.__renderCartConfig()}
     `;
   }
@@ -454,7 +455,6 @@ export class TemplateConfigForm extends Base<Item> {
           </div>
         `
       )}
-      ${this.__renderGroup('location_filtering', this.__renderCartFilter())}
       ${this.__renderGroup(
         'colors',
         html`
@@ -470,6 +470,24 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderCartFilter(): TemplateResult {
     return html`
+      <div class="grid grid-cols-2 gap-xs">
+        <x-choice
+          data-testid="locations-shipping"
+          lang=${this.lang}
+          ns=${this.ns}
+          .items=${['allow', 'ban']}
+          .getText=${(v: string) => html` ${this.t(`locations.${v}.title`)} `}
+        >
+        </x-choice>
+        <x-choice
+          data-testid="locations-billing"
+          lang=${this.lang}
+          ns=${this.ns}
+          .items=${['allow', 'ban', 'same']}
+          .getText=${(v: string) => html` ${this.t(`locations.${v}.title`)} `}
+        >
+        </x-choice>
+      </div>
       <div class="p-s">
         <x-checkbox class="py-s" @change=${this.__handleLocationFiltering.bind(this)}>
           <foxy-i18n ns=${this.ns} key="location_filtering.independently"></foxy-i18n>
@@ -615,30 +633,27 @@ export class TemplateConfigForm extends Base<Item> {
 
   private __renderCartConfigFoxyComplete() {
     return html`
-      <div class="p-m">
-        <div class="grid grid-cols-4 gap-s">
-          <div class="py-m col-span-3">
-            <x-checkbox
-              class="py-s"
-              @change=${(ev: CustomEvent) =>
-                this.__setJsonAttribute(['foxycomplete', 'usage'], ev.detail ? 'required' : 'none')}
-            >
-              <foxy-i18n ns=${this.ns} key="foxycomplete.usage"></foxy-i18n>
-            </x-checkbox>
-            <x-checkbox class="py-s">
-              <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
-            </x-checkbox>
-            <x-checkbox class="py-s">
-              <foxy-i18n ns=${this.ns} key="foxycomplete.show_combobox"></foxy-i18n>
-            </x-checkbox>
+      <x-choice
+        data-testid="cart-display"
+        lang=${this.lang}
+        ns=${this.ns}
+        .items=${['combo_box', 'search', 'disabled']}
+        .getText=${(v: string) => html`
+          <div>${this.t(`${v}.title`)}</div>
+          <div class="text-secondary text-s">${this.t(`${v}.description`)}</div>
+        `}
+      >
+        <div slot="combo_box-conditional">
+          <div class="flex">
+            ${this.__renderTextIconField(['foxycomplete', 'combobox_open'])}
+            ${this.__renderTextIconField(['foxycomplete', 'combobox_close'])}
           </div>
-          <div>
-            ${this.__renderTextField(['foxycomplete', 'combobox_open'])}
-            ${this.__renderTextField(['foxycomplete', 'combobox_close'])}
-          </div>
+          <x-checkbox class="py-s">
+            <foxy-i18n ns=${this.ns} key="foxycomplete.show_flags"></foxy-i18n>
+          </x-checkbox>
         </div>
-      </div>
-      <div class="p-m">
+      </x-choice>
+      <div class="px-m border-t border-contrast-10">
         <x-checkbox class="py-s" @change=${this.__handleChangeEnablePostalCode.bind(this)}>
           <foxy-i18n ns=${this.ns} key="postal_code_lookup.enable"></foxy-i18n>
         </x-checkbox>
@@ -693,19 +708,19 @@ export class TemplateConfigForm extends Base<Item> {
     (ev.target as HTMLInputElement).value = '';
   }
 
-  private __renderCartType(): TemplateResult {
+  private __renderCartDisplay(): TemplateResult {
     return html`
       <x-choice
-        data-testid="cart-type"
+        data-testid="cart-display"
         lang=${this.lang}
         ns=${this.ns}
         .items=${['default', 'fullpage', 'custom']}
         .value=${this.__getJsonAttribute('cart_type')}
         @change=${this.__handleChangeCartType}
         .getText=${(v: string) => html`
-          <div class="py-s">
-            <div>${this.t(`cart_type.${v}.title`)}</div>
-            <div class="text-secondary text-s">${this.t(`cart_type.${v}.description`)}</div>
+          <div>
+            <div>${this.t(`cart_display.${v}.title`)}</div>
+            <div class="text-secondary text-s">${this.t(`cart_display.${v}.description`)}</div>
           </div>
         `}
       >
@@ -750,6 +765,15 @@ export class TemplateConfigForm extends Base<Item> {
       value=${this.__getJsonAttribute(attribute) ?? defaultValue}
       .items=${this.__translatedItems(items)}
     ></vaadin-combo-box>`;
+  }
+
+  private __renderTextIconField(attribute: string | Array<string>): TemplateResult {
+    const label = typeof attribute == 'string' ? attribute : attribute.join('.');
+    return html`<vaadin-text-field
+      class="w-xl m-s"
+      label=${this.t(label)}
+      value=${this.__getJsonAttribute(attribute) ?? ''}
+    ></vaadin-text-field>`;
   }
 
   private __renderTextField(attribute: string | Array<string>): TemplateResult {

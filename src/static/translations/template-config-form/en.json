@@ -11,9 +11,6 @@
     }
   },
   "cart": "Cart",
-  "cart_display": {
-    "title": "Cart display"
-  },
   "cart_display_config": {
     "hidden_product_options": "hidden options",
     "show_enddate": "End date",
@@ -26,7 +23,7 @@
     "show_sub_startdate": "Start date",
     "usage": "Customize cart display"
   },
-  "cart_type": {
+  "cart_display": {
     "custom": {
       "description": "Build your own JSONP cart with included config",
       "title": "Custom"
@@ -39,7 +36,7 @@
       "description": "Send all costumers to a full page cart while still including minicart functionality",
       "title": "Full page"
     },
-    "title": "Cart type"
+    "title": "Cart display"
   },
   "checkout": "Checkout",
   "checkout_type": {
